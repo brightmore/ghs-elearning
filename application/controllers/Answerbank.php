@@ -27,7 +27,6 @@
      
     function index(){
 
-
         $this->load->view('header');
         $this->load->view('list_answerBank_controller');
         $this->load->view('footer');
@@ -39,7 +38,7 @@
      * 
      * create form
      * 
-     * @auther Shabeeb <brightmore1@gmail.com>
+     * @auther Bright Nsarko <brightmore1@gmail.com>
      * @createdon   : 2015-06-03 
      * @
      * 
@@ -51,12 +50,11 @@
      */
 
     public function create() {			
-            $data['id']= 0;
+           $data['id']= 0;
            
            $this->load->view('header');
            $this->load->view('create_answerBank_controller',$data);
            $this->load->view('footer');
-
    }
      
        
@@ -65,7 +63,7 @@
      * Functon edit
      * edit form
      * 
-     * @auther Bright<brightmore1@gmail.com>
+     * @auther Bright Nsarko<brightmore1@gmail.com>
      * @createdon   : 2015-06-03 
      *
      * @param int 
@@ -90,7 +88,6 @@
                                   $data['update_data']= $result;
 		}
                 
-
            $this->load->view('header');
            $this->load->view('create_answerBank_controller',$data);
            $this->load->view('footer');
@@ -189,7 +186,7 @@
             * 
             * process grid data 
             * 
-            * @auther Shabeeb <mail@shabeebk.com>
+            * @auther Shabeeb <brightmore1@gmail.com>
             * @createdon   : 2015-06-03 
             * @
             * 
@@ -208,8 +205,6 @@
 			exit('No direct script access allowed');
 		}
 		
-                
-          
 		$this->load->library('pagination');
 			
 		$sort_col = $_GET["iSortCol_0"];
@@ -220,7 +215,6 @@
 			
 		$config["total_rows"] = $this->answerBank_controller_model->count_all_rows($search);
 		
-
 		$this->pagination->initialize($config);
 
 		$data["links"] = $this->pagination->create_links();
@@ -252,15 +246,14 @@
             * 
             * process grid data 
             * 
-            * @auther Shabeeb <mail@shabeebk.com>
+            * @auther Bright Nsarko <brightmore1@gmail.com>
             * @createdon   : 2015-06-03 
             * @
             * 
             * @param type 
             * @return type
             * exceptions
-            *
-            * Created Using CIIgnator 
+            * 
             * 
             */
 
@@ -276,8 +269,6 @@ public function remove_form() {
 
             $condition = array("answer_id" => $pid);
            // $params = array("is_active" => 0);
-
-
 
             $insert = $this->db->delete("answerBank", $condition);
 
