@@ -1,7 +1,5 @@
-<?php
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-if (!defined("BASEPATH"))
-    exit('No direct script access allowed');
 
 class Takecourse_model extends CI_Model {
 
@@ -69,7 +67,6 @@ class Takecourse_model extends CI_Model {
             $search = mysql_escape_string($search);
         }
 
-
         //$this->db->where($where, NULL, FALSE);
         $this->db->order_by($sort_field, $sortby);
         $this->db->limit($limit, $start);
@@ -94,18 +91,18 @@ class Takecourse_model extends CI_Model {
         return $this->db->get()->row()->numrows;
     }
 
-    function studentTakesubject(){
+    function studentTakesubject($course_id,$subject_id){
         date_default_timezone_set("Africa/Accra");
         
-        $course_id = $this->input->get('subtopic_id');
-        $start_date = date();
-        $username = $this->session->userdata('username');
+       $start_datetime =  mktime();
         
         $data = array(
-                'subtopic_id'=>$course_id,
-                'dateTime_start'=>$start_date,
-                'username'=>$username,
-        );
+                    'subject_id'=>$subject_id,
+                    'datetime_start'=>$start_datetime,
+                    'username'=>  $this->username,
+                    'time_start'=>'',
+                    'takeCourse_ID'=>$course_id
+                );
         
         $insert_id = $this->db->insert($this->_table,$data);
         if($insert_id){
@@ -120,8 +117,16 @@ class Takecourse_model extends CI_Model {
         $this->db->from($this->_table);
         $this->db->join("courses", "subjects.course_id = courses.course_id");
         $this->db->where(array('courses.course_id'=>$course_id));
-        $this->db->order_by("subjec_name")
+        $this->db->order_by("subjec_name");
         $query = $this->db->get();
+        
+        if($query->result()){
+            return $query->result();
+        }
+        
+        return false;
     }
+    
+    
     
 }

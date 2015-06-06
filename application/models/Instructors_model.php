@@ -25,9 +25,6 @@ class Instructors_model extends CI_Model {
     }
     
 
-
-    
-
 /**
      * Functon find by primery key
      * 
