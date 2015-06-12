@@ -252,19 +252,6 @@ class TakeQuiz_model extends CI_Model {
     
     function markQuiz($quiz_code){
         
-//        //get question list for this quiz
-//        $this->db->select("*");
-//        $this->db->from($this->_table);
-//        $this->db->where(array('quiz_code'=>$quiz_code,'username'=>$this->username));
-//        $query = $this->db->get();
-//        
-//        if(! $query->num_rows()){
-//             return FALSE;
-//        }
-//        
-//         $row = $query->row();
-//         $questions = unserialize($row->question_answer);
-//        
         $questions = $this->loadQuiz($quiz_code);
         
          if (!is_array($questions)) {

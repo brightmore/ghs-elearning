@@ -25,20 +25,14 @@ $title_msg = ($id == 0) ? "Create" : " Update";
 
 <div class="row">
 <div class="col-lg-12">
-
-
              <h3 class="text-muted"><?php echo $title_msg; ?> Course Content</h3> 
-                
-
-
+               
                                 <div id="smessage">
                                     <?php echo validation_errors();
                                            echo $this->session->flashdata('smessage');
                                     ?>
 
                                 </div>
-
-
 
                                 <form action="" method="post"  class="form-group"  name="CourseContent" id="CourseContent">
                                     <?php

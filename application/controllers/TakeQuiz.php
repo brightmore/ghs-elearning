@@ -133,7 +133,8 @@ class TakeQuiz extends CI_Controller {
             $answer_id = $this->input->post('answer_id');
             $user_name = $this->input->post('user_name');
             $quiz_type = $this->input->post('quiz_type');
-            $data_inser_array = array('question_id' => $question_id,
+            $data_inser_array = array(
+                'question_id' => $question_id,
                 'answer_id' => $answer_id,
                 'user_name' => $user_name,
                 'quiz_type' => $quiz_type,
@@ -182,16 +183,12 @@ class TakeQuiz extends CI_Controller {
      * @return type
      * exceptions
      *
-     *   
-     * 
      */
     public function list_all_data() {
 
         if (!$this->input->is_ajax_request()) {
             exit('No direct script access allowed');
         }
-
-
 
         $this->load->library('pagination');
 
@@ -203,18 +200,15 @@ class TakeQuiz extends CI_Controller {
 
         $config["total_rows"] = $this->takeQuiz_model->count_all_rows($search);
 
-
         $this->pagination->initialize($config);
 
         $data["links"] = $this->pagination->create_links();
-
 
         $sort_col = $_GET["iSortCol_0"];
         $sort_dir = $_GET["sSortDir_0"];
         $limit = $_GET["iDisplayLength"];
         $start = $_GET["iDisplayStart"];
         $search = $_GET["sSearch"];
-
 
         $arr = $this->takeQuiz_model->get_data($sort_col, $sort_dir, $limit, $start, $search);
 
@@ -254,8 +248,6 @@ class TakeQuiz extends CI_Controller {
 
             $condition = array("quiz_code" => $pid);
             // $params = array("is_active" => 0);
-
-
 
             $insert = $this->db->delete("takeQuiz", $condition);
 

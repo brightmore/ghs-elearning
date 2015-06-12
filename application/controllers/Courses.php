@@ -11,7 +11,8 @@ class Courses extends CI_Controller {
    public function __construct() {
         parent::__construct();
 
-        $this->load->model('courses_model');
+        $this->load->model('courses_model','mcourses');
+       
     }
 
     /**
@@ -30,14 +31,18 @@ class Courses extends CI_Controller {
      * 
      */
     function index() {
-
-        $this->load->view('partials/header');
-        $this->load->view('admin/list_courses');
-        $this->load->view('partials/footer');
+        $content['id'] = 0;
+        $content['categories'] = $this->mcourses->getCourseCategories();
+        $data['title'] = "Course Category Management";
+        $this->load->view('admin/partials/header',$data);
+        $data['content']= $this->load->view('admin/create_CourseCategory', $content,TRUE);
+        $this->load->view('admin/template',$data);
     }
 
+    
+    
     /**
-     * Functon create
+     * Functon Course Category
      * 
      * create form
      * 
@@ -49,16 +54,39 @@ class Courses extends CI_Controller {
      * @return type
      * exceptions
      *
-     *   
-     * 
      */
-    public function create() {
-        $data['id'] = 0;
-
-        $this->load->view('header');
-        $this->load->view('create_courses', $data);
-        $this->load->view('footer');
+    public function create_CourseCategory() {
+        $content['id'] = 0;
+        $data['page'] = "Course Category Management";
+        $content['categories'] = $this->mcourses->getCourseCategories();
+        $data['title'] = "Course Category Management";
+       // $this->load->view('admin/partials/header',$data);
+        $data['content']= $this->load->view('admin/create_CourseCategory', $content,TRUE);
+        $this->load->view('admin/template',$data);
     }
+    
+    public function create_course(){
+        
+        $categories_list = $this->mcourses->getCourseCategories();
+        $categories = array();
+        if($categories_list === FALSE){
+            $categories['error'] = "Select Category";
+        }else{
+            foreach ($categories_list as $value) {
+                $categories[$value->cat_id] = $value->cat_name;
+               
+            }
+             array_unshift($categories, "select Category");
+        }
+        $data['page'] = "Courses";
+        $content['id'] = 0;
+        $content['categories'] = $categories;
+        $content['courses'] = $this->mcourses->getCourses(); 
+        $data['title'] = "Course Management";
+        $data['content'] = $this->load->view('admin/create_courses',$content,TRUE);
+        $this->load->view('admin/template',$data);
+    }
+    
 
     /**
      * Functon edit
@@ -75,7 +103,6 @@ class Courses extends CI_Controller {
      * 
      */
     public function edit($id = 0) {
-
 
         $data['id'] = $id;
         if ($id != 0) {
@@ -234,7 +261,6 @@ class Courses extends CI_Controller {
             exit('No direct script access allowed');
         }
 
-
         $this->load->library('pagination');
 
         $sort_col = $_GET["iSortCol_0"];
@@ -328,7 +354,7 @@ class Courses extends CI_Controller {
         if (empty($error)) {
             $data = $this->upload->data();
             $this->course_banner = $data['file_name'];
-            $this->banner_url = $this->upload_location.'/'.$data['file_name'];
+            $this->banner_url = $this->upload_location.'/'.$this->course_banner;
         } else {
             $this->bannerUrl_errors[$fieldname] = $error;
         }

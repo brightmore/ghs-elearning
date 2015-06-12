@@ -1,9 +1,6 @@
-<?php
+<?php if (!defined("BASEPATH")) exit('No direct script access allowed');
 
-if (!defined("BASEPATH"))
-    exit('No direct script access allowed');
-
-class CI_CourseCategory_model extends CI_Model {
+class Coursecategory_model extends CI_Model {
 
     /**
      * @var string

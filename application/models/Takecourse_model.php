@@ -100,7 +100,6 @@ class Takecourse_model extends CI_Model {
                     'subject_id'=>$subject_id,
                     'datetime_start'=>$start_datetime,
                     'username'=>  $this->username,
-                    'time_start'=>'',
                     'takeCourse_ID'=>$course_id
                 );
         
@@ -120,8 +119,11 @@ class Takecourse_model extends CI_Model {
         $this->db->order_by("subjec_name");
         $query = $this->db->get();
         
+        $data = array();
         if($query->result()){
-            return $query->result();
+            $data = $query->result();
+            $query->free_result();
+            return $data;
         }
         
         return false;
