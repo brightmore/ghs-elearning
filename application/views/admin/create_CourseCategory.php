@@ -62,7 +62,7 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                     <div class="box">
                         <div class="box-header">
 <!--                                    <i class="fa fa-comments-o"></i>-->
-                            <h3 class="box-title"><?php echo $title_msg; ?> Courses</h3> <hr >
+                            <h3 class="box-title"><?php echo $title_msg; ?> Course Category</h3> <hr >
                         </div>
                         <div class="box-body">
                            <div id="smessage">
@@ -71,37 +71,36 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                             echo $this->session->flashdata('smessage');
                             ?>
                         </div>
-                            
-                            <form action="#" method="post">
+                           <?php echo form_open_multipart('/Courses/process_category_form') ?> 
+                            <?php echo form_hidden($csrf); ?>
                                 <div class="form-group">
                                     <label>Course Name*</label>
                                     <div class="field">
-                                        <input name="course_id" id="course_id" type="text"  class="xxwide text input validate[required] form-control" placeholder="Course id" value="" />
+                                        <input name="category_name" id="category_name" type="text"  class="xxwide text input validate[required] form-control" placeholder="Course id" value="" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Course description*</label>
                                     <div class="field">
-                                        <input name="course_description" id="course_description" type="text"  class="xxwide text input validate[required] form-control" placeholder="Course description" value="<?php echo $course_description; ?>" />
+                                        <input name="description" id="description" type="text"  class="xxwide text input validate[required] form-control" placeholder="Course description" value="<?php echo $course_description; ?>" />
                                     </div>
                                 </div>
-                                <div class="form-group">
+<!--                                <div class="form-group">
                                     <label>Course type*</label>
                                     <div class="control-group">
                                         <label><input type="radio" name="course_type" id="general" value="general">General</label> 
                                          <label><input type="radio" name="course_type" id="general" value="specialize">Specialize</label> 
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="form-group">
-                                    <input type="file" id="banner_url" name="banner_url" value="<?php echo $banner_url?>" >
+                                    <input type="file" id="logo" name="userfile" value="<?php echo $banner_url?>" >
                                 </div>
 
                                 <div class="box-footer clearfix">
-                                    
                                     <button class="pull-right btn btn-default" id="add_insuere_group" value="<?php echo $btn_msg ?>">Send <i class="fa fa-arrow-circle-right"></i></button>
                                 </div>   
-                            </form>
+                            <?php echo form_close() ?>
                         </div>
                     </div>         
                 </section><!-- /.content -->

@@ -10,13 +10,13 @@
         <link href="<?php echo base_url('assets/css/ionicons.min.css')?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo base_url('assets/css/jquery.toast.css')?>" rel="stylesheet" type="text/css" />
         <!-- Date Picker -->
-        <link href="<?php echo base_url()?>public/css/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo base_url('assets/css/datepicker/datepicker3.css')?>" rel="stylesheet" type="text/css" />
         <!-- Daterange picker -->
-        <link href="<?php echo base_url()?>public/css/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo base_url('assets/css/daterangepicker/daterangepicker-bs3.css')?>" rel="stylesheet" type="text/css" />
         <!-- bootstrap wysihtml5 - text editor -->
         <!--        <link href="css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" />-->
         <!-- Theme style -->
-        <link href="<?php echo base_url()?>assets/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo base_url('assets/css/AdminLTE.css')?>" rel="stylesheet" type="text/css" />
        
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -34,7 +34,7 @@
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
-                <!--                 Sidebar toggle button-->
+                <!--Sidebar toggle button-->
                 <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -50,7 +50,6 @@
                             <i class="fa fa-envelope"></i>
                             <span class="label label-success">4</span>
                         </a>
-
                     </li>
                 </ul>
             </div>

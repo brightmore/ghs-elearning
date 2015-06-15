@@ -91,6 +91,9 @@ class Auth extends CI_Controller {
 				'type' => 'password',
 			);
                         
+                        
+                       
+                        
                         $this->load->view('public/partials/header',  $this->data);
 			$this->_render_page('authpublic/login', $this->data);
                         $this->load->view('public/partials/footer',  $this->data);

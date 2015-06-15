@@ -418,6 +418,7 @@
         <!-- Bootstrap WYSIHTML5 -->
 <!--        <script src="js/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>-->
         <!-- iCheck -->
+        <script src="<?php echo base_url()?>assets/js/icheck.min.js" type="text/javascript"></script>
         <script src="<?php echo base_url()?>assets/js/jquery.toast.min.js" type="text/javascript"></script>
         <script src="<?php echo base_url()?>assets/js/jquery.tmpl.min.js" type="application/javascript"></script>
         <script src="<?php echo base_url()?>assets/video-js/video.js" type="application/javascript"></script>

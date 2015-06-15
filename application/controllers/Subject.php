@@ -3,7 +3,9 @@
 class Subject extends CI_Controller {
 
     private $username;
-
+    private $uploadLocation = "./uploads/subjects";
+    private $_table = 'subject';
+    
     public function __construct() {
         parent::__construct();
 
@@ -27,7 +29,7 @@ class Subject extends CI_Controller {
      * 
      */
     function index() {
-
+        $this->load->model('Members_mobel', 'mMember');
         $courses_list = $this->mcourses->getCourses();
         $courses = array();
 
@@ -37,8 +39,10 @@ class Subject extends CI_Controller {
             }
         }
 
+        $content['csrf'] = _get_csrf_nonce();
         $content['id'] = 0;
         $content['subjects'] = $this->msubject->getSubjectDetails();
+        $content['instructors'] = $this->mMember->get_instructors_for_view();
         $data['title'] = "Subject Management";
 
         $content['page'] = "Subjects";
@@ -61,7 +65,7 @@ class Subject extends CI_Controller {
         $content['subject'] = $subject;
         $content['courses'] = $courses;
         $content['subject_content'] = $this->msubject->getSubjectContent($subject_id);
-        
+
         $content['page'] = "Subject <small class='success'>" . $subject->subject_name . "</small>";
         $data['content'] = $this->load->view('admin/vsubject_detail', $content, TRUE);
         $this->load->view('admin/template', $data);
@@ -172,8 +176,13 @@ class Subject extends CI_Controller {
      */
     public function process_form() {
 
-        if (!$this->input->is_ajax_request()) {
-            exit('No direct script access allowed');
+//        if (!$this->input->is_ajax_request()) {
+//            exit('No direct script access allowed');
+//        }
+
+        if (_valid_csrf_nonce() === FALSE) {
+            $this->session->flashdata('error', 'There is something fishy about the form you just submitted, it fails CSRF Test');
+            redirect("Courses/create_CourseCategory");
         }
 
         $id = isset($_POST['id']) ? $_POST['id'] : 0;
@@ -183,15 +192,41 @@ class Subject extends CI_Controller {
         $data = array();
 
 
-        $this->form_validation->set_rules("subtopic_id", "subtopic id", "required|xss_clean");
-        $this->form_validation->set_rules("topic_id", "topic id", "required|xss_clean");
-        $this->form_validation->set_rules("subtopic_name", "subtopic name", "required|xss_clean");
-        $this->form_validation->set_rules("slug", "slug", "required|xss_clean");
-        $this->form_validation->set_rules("description", "description", "required|xss_clean");
-        $this->form_validation->set_rules("content_type", "content type", "required|xss_clean");
-        $this->form_validation->set_rules("image", "image", "required|xss_clean");
-        $this->form_validation->set_rules("content", "content", "required|xss_clean");
-        $this->form_validation->set_rules("rank", "rank", "required|xss_clean");
+        $this->form_validation->set_rules("subject_name", "Subject name", "trim|required");
+        $this->form_validation->set_rules("slug", "slug", "trim|required");
+        $this->form_validation->set_rules("rank", "rank", "trim|required");
+        $this->form_validation->set_rules("course_id", 'Course ID', 'trim|required');
+        $this->form_validation->set_rules("subject_description", "description", "trim|required");
+        $this->form_validation->set_rules('instructors','Instructors','required');
+
+
+//        $video_type = $this->input->post('video_type');
+//        if($video_type == 'html5-comp'){
+//            $this->form_validation->set_rules('video_url','Intro Video','required');
+//        }else{
+//            $this->form_validation->set_rules("youtubeVideo", "Youtube Video Url","required");
+//        }
+
+        $video_url = NULL;
+        if (@!$_FILES['video_url']['name'] !== '') {
+            $config['upload_path'] = $this->uploadLocation;
+            $config['allowed_types'] = 'mp4|flv';
+            $config['encrypt_name'] = TRUE;
+            $config['remove_spaces'] = TRUE;
+            $config['max_size'] = '10048';
+
+            $this->load->library('upload');
+            $this->upload->initialize($config);
+            $this->upload->do_upload('video_url');
+
+            $error = $this->upload->display_errors();
+            if (empty($error)) {
+                $file_data = $this->upload->data();
+                $video_url = $this->uploadLocation . '/' . $file_data['file_name'];
+            }
+        }else{
+            $this->form_validation->set_rules('youtubeVideo','Youtube Video Url','trim|required');
+        }
 
         if ($this->form_validation->run() == FALSE) {
 
@@ -203,28 +238,35 @@ class Subject extends CI_Controller {
             $message['error_count'] = $count;
         } else {
 
-            $id = $this->input->post('id');
-            $subject_id = $this->input->post('subject_id');
-            $topic_id = $this->input->post('topic_id');
+
+            $course_id = $this->input->post('course_id');
             $subject_name = $this->input->post('subject_name');
             $slug = $this->input->post('slug');
             $description = $this->input->post('description');
-            $content_type = $this->input->post('content_type');
-            $image = $this->input->post('image');
-            $content = $this->input->post('content');
-            $rank = $this->input->post('rank');
+//            $content_type = $this->input->post('content_type');
+//            $image = $this->input->post('image');
+//            $content = $this->input->post('content');
+
+            $instructors_ids = $this->input->post('instructors');
+
+            $totalCourse = $this->db->count_all($this->table);
+            $subject_id = 'S' . str_pad($totalCourse, 4, '0', STR_PAD_LEFT);
 
             $data_inser_array = array(
                 'subject_id' => $subject_id,
-                'topic_id' => $topic_id,
+                'course_id' => $course_id,
                 'subject_name' => $subject_name,
                 'slug' => $slug,
                 'description' => $description,
-                'content_type' => $content_type,
-                'image' => $image,
-                'content' => $content,
+//                'content_type' => $content_type,
+//                'image' => $image,
+//                'content' => $content,
                 'rank' => $rank,
             );
+
+            if ($video_url) {
+                $data_inser_array['video_url'] = $video_url;
+            }
 
             if (isset($id) && !empty($id)) {
 
@@ -235,21 +277,34 @@ class Subject extends CI_Controller {
                 $this->session->set_flashdata('smessage', "Data Updated Successfully");
                 $message['is_redirect'] = true;
             } else {
-                //$insert = $this->CourseContent_model->create('courseContent',$data_inser_array);
-                $insert = $this->db->insert('courseContent', $data_inser_array);
-                $message['is_redirect'] = true;
 
-                $data = "Data Inserted Successfully.";
-            }
+                $rank = $this->input->post('rank');
+                $this->db->select("rank");
+                $this->db->from('subject');
+                $this->db->where('course_id', $course_id);
+                $this->db->where('rank', $rank);
+                $query = $this->db->get();
 
-            if ($insert) {
+                if ($query->num_rows() === 0) {
+                    //$insert = $this->CourseContent_model->create('courseContent',$data_inser_array);
+                    $insert = $this->db->insert('subject', $data_inser_array);
+                    $message['is_redirect'] = true;
 
-                $message['is_error'] = false;
-                $message['is_redirect'] = true;
-            } else {
-                $message['is_error'] = true;
-                $message['is_redirect'] = false;
-                $data = "Something Went Wrong..";
+                    $data = "Data Inserted Successfully.";
+                    if ($insert) {
+
+                        $message['is_error'] = false;
+                        $message['is_redirect'] = true;
+                    } else {
+                        $message['is_error'] = true;
+                        $message['is_redirect'] = false;
+                        $data = "Something Went Wrong..";
+                    }
+                }else{
+                    $message['is_error'] = TRUE;
+                    $message['is_redirect'] = FALSE;
+                    $data = "The rank is taking, Two subjects can't have same rank number.";
+                }
             }
         }
 

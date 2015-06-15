@@ -21,22 +21,26 @@ class Member extends CI_Controller {
     //redirect if needed, otherwise display the user list
     function index() {
 
-        if ($this->ion_auth->logged_in()) {
-            //redirect them to the login page
-            //redirect('Auth/login', 'location');
-            $this->login();
-        } else {
-            //set the flash data error message if there is one
-            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
-            //list the users
-            $this->data['users'] = $this->ion_auth->users()->result();
-            foreach ($this->data['users'] as $k => $user) {
-                $this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
-            }
-
-            $this->_render_page('auth/index', $this->data);
-        }
+//        if ($this->ion_auth->logged_in()) {
+//            //redirect them to the login page
+//            //redirect('Auth/login', 'location');
+//            $this->login();
+//        } else {
+//            //set the flash data error message if there is one
+//            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+//
+//            //list the users
+//            $this->data['users'] = $this->ion_auth->users()->result();
+//            foreach ($this->data['users'] as $k => $user) {
+//                $this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
+//            }
+//
+//            $this->_render_page('auth/index', $this->data);
+//        }
+    }
+    
+    function admin(){
+        
     }
 
     //log the user in
@@ -61,7 +65,7 @@ class Member extends CI_Controller {
                 //if the login was un-successful
                 //redirect them back to the login page
                 $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect('auth/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
+                redirect('Member/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
             }
         } else {
             //the user is not logging in so display the login page
@@ -138,8 +142,9 @@ class Member extends CI_Controller {
                 'value' => $user->id,
             );
 
-            //render
-            $this->_render_page('auth/change_password', $this->data);
+            $this->load->view('authpublic/header');
+            $this->_render_page('authpublic/change_password', $this->data);
+            $this->load->view('authpublic/footer');
         } else {
             $identity = $this->session->userdata('identity');
 
@@ -151,7 +156,7 @@ class Member extends CI_Controller {
                 $this->logout();
             } else {
                 $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect('auth/change_password', 'refresh');
+                redirect('Member/change_password', 'refresh');
             }
         }
     }
@@ -409,24 +414,27 @@ class Member extends CI_Controller {
         $tables = $this->config->item('tables', 'ion_auth');
 
         //validate form input
-        $this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'required');
-        $this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'required');
+//        $this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'required');
+//        $this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'required');
         $this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'required|valid_email|is_unique[' . $tables['users'] . '.email]');
-        $this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required');
-        $this->form_validation->set_rules('company', $this->lang->line('create_user_validation_company_label'), 'required');
+//        $this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required');
+//        $this->form_validation->set_rules('company', $this->lang->line('create_user_validation_company_label'), 'required');
         $this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
 
         if ($this->form_validation->run() == true) {
-            $username = strtolower($this->input->post('first_name')) . ' ' . strtolower($this->input->post('last_name'));
+          //  $username = strtolower($this->input->post('first_name')) . ' ' . strtolower($this->input->post('last_name'));
+            $username = strtolower($this->input->post('username'));
             $email = strtolower($this->input->post('email'));
             $password = $this->input->post('password');
 
+            
             $additional_data = array(
-                'first_name' => $this->input->post('first_name'),
-                'last_name' => $this->input->post('last_name'),
-                'company' => $this->input->post('company'),
-                'phone' => $this->input->post('phone'),
+//                'first_name' => $this->input->post('first_name'),
+//                'last_name' => $this->input->post('last_name'),
+//                'institution' => $this->input->post('institution'),
+//                'phone' => $this->input->post('phone'),
+//                'salutation'=>  $this->input->post('salutation'),
             );
         }
         if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data)) {
@@ -457,11 +465,11 @@ class Member extends CI_Controller {
                 'type' => 'text',
                 'value' => $this->form_validation->set_value('email'),
             );
-            $this->data['company'] = array(
-                'name' => 'company',
-                'id' => 'company',
+            $this->data['institution'] = array(
+                'name' => 'institution',
+                'id' => 'institution',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('company'),
+                'value' => $this->form_validation->set_value('institution'),
             );
             $this->data['phone'] = array(
                 'name' => 'phone',
@@ -480,6 +488,15 @@ class Member extends CI_Controller {
                 'id' => 'password_confirm',
                 'type' => 'password',
                 'value' => $this->form_validation->set_value('password_confirm'),
+            );
+            
+            $this->data['salutation'] = array(
+                'miss'=>'Miss',
+                'mrs'=>'Mrs.',
+                'mr'=>'Mr.',
+                'dr'=>'Dr.',
+                'madam'=>'Madam',
+                'sir'=>'Sir',
             );
 
             $this->load->view('public/partials/header', $this->data);

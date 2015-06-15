@@ -3,10 +3,11 @@
 class Questions extends CI_Controller {
 
     private $username;
+
     public function __construct() {
         parent::__construct();
 
-        $this->load->model('question_model','mquestions');
+        $this->load->model('question_model', 'mquestions');
         $this->load->model('Subject_model', 'msubject');
         $this->load->model('courses_model', 'mcourses');
         $this->username = $this->session->userdata('username');
@@ -28,15 +29,15 @@ class Questions extends CI_Controller {
      * 
      */
     function index() {
-        $subjects_list  = $this->msubject->getSubjects();
-        $subjects  = array();
-        
-        if($subjects_list){
+        $subjects_list = $this->msubject->getSubjects();
+        $subjects = array();
+
+        if ($subjects_list) {
             foreach ($subjects_list as $value) {
                 $subjects[$value->subject_id] = $value->subject_name;
             }
         }
-      
+
         $content['page'] = "Question Bank";
         $content['subjects'] = $subjects;
         $content['courses'] = $this->mcourses->getCoursesForView();
@@ -44,63 +45,64 @@ class Questions extends CI_Controller {
         $data['content'] = $this->load->view('admin/create_question', $content, TRUE);
         $this->load->view('admin/template', $data);
     }
-    
-    function setQuestion($subject_id){
+
+    function setQuestion($subject_id) {
         
     }
-    
-    function view($id,$question){
+
+    function view($id, $question) {
         $question_id = $id;
         $questionAnswers = $this->mquestions->getQuestionAnswers($question_id);
         $question = urldecode($question);
-        
-         $subjects_list  = $this->msubject->getSubjects();
-        $subjects  = array();
-        
-        if($subjects_list){
+
+        $subjects_list = $this->msubject->getSubjects();
+        $subjects = array();
+
+        if ($subjects_list) {
             foreach ($subjects_list as $value) {
                 $subjects[$value->subject_id] = $value->subject_name;
             }
         }
-        
+
         $data['title'] = $question;
         $content['page'] = "Question Bank";
         $content['id'] = $id;
         $content['question'] = $question;
         $content['courses'] = $this->mcourses->getCoursesForView();
         $content['questionAnswers'] = $questionAnswers;
-        $data['content'] = $this->load->view('admin/viewQuestion',$content,TRUE);
-        $this->load->view('admin/template',$data);  
+        $data['content'] = $this->load->view('admin/viewQuestion', $content, TRUE);
+        $this->load->view('admin/template', $data);
     }
-    
-    function deleteQuestion($question_id){
-       $this->db->trans_start();
-$this->db->query('AN SQL QUERY...');
-$this->db->query('ANOTHER QUERY...');
-$this->db->trans_complete();
 
-if ($this->db->trans_status() === FALSE)
-{
-        // generate an error... or use the log_message() function to log your error
-}
+    function deleteQuestion($question_id) {
+        $this->db->trans_begin();
+
+        $this->db->delete('question_bank',array('question_id'=>$question_id));
+        $this->db->delete('answer_bank',array('question_id'=>$question_id));
         
-        
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+             echo json_encode(['result'=>FALSE]);
+        } else {
+            $this->db->trans_commit();
+            echo json_encode(['result'=>TRUE]);
+        }
     }
-    
-    function showSubjectQuestion($subject_id,$subject_name){
+
+    function showSubjectQuestion($subject_id, $subject_name) {
         $questions = $this->mquestions->getQuestions($subject_id);
-         
+
         $sectionA = array();
-         $sectionB = array();
-         if($questions){
-            list( $sectionA, $sectionB ) = array_chunk( $questions, ceil(count($questions) / 2) );
-         }
+        $sectionB = array();
+        if ($questions) {
+            list( $sectionA, $sectionB ) = array_chunk($questions, ceil(count($questions) / 2));
+        }
         $content['sectionA'] = $sectionA;
         $content['sectionB'] = $sectionB;
-        $content['page'] = "Question Bank For " .urldecode($subject_name);
+        $content['page'] = "Question Bank For " . urldecode($subject_name);
         $data['title'] = $content['page'];
-        $data['content'] = $this->load->view('admin/vsubjectQuestions',$content,TRUE);
-        $this->load->view('admin/template',$data);
+        $data['content'] = $this->load->view('admin/vsubjectQuestions', $content, TRUE);
+        $this->load->view('admin/template', $data);
     }
 
     /**
@@ -172,8 +174,6 @@ if ($this->db->trans_status() === FALSE)
      * @return type
      * exceptions
      *
-     *   
-     * 
      */
     public function process_form() {
 
