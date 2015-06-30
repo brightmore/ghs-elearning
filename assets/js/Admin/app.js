@@ -7,18 +7,13 @@
 
 
 var left_side_width = 220; //Sidebar width in pixels
-//var APIserverUrl = "http://188.226.199.21:3001/api";
-var APIserverUrl = "http://127.0.0.1:3001/api";
-//var socketUrl = "http://188.226.199.21:3000/";
-var socketUrl = "http://127.0.0.1:3000/";
-        
+
     //user management
     var globalEmail = null;
     var globalID = null;
 
 $(function() {
     "use strict";
-
     //Enable sidebar toggle
     $("[data-toggle='offcanvas']").click(function(e) {
         e.preventDefault();
@@ -133,16 +128,45 @@ $(function() {
     //Fix the fixed layout sidebar scroll bug
     fix_sidebar();
 
-    /*
-     * We are gonna initialize all checkbox and radio inputs to 
-     * iCheck plugin in.
-     * You can find the documentation at http://fronteed.com/iCheck/
-     */
-//    $("input[type='checkbox']:not(.simple), input[type='radio']:not(.simple)").iCheck({
-//        checkboxClass: 'icheckbox_minimal',
-//        radioClass: 'iradio_minimal'
-//    });
 
+//subject content
+   $('#youtube_url').hide();
+   $('#html5_video').hide();
+   $('#pdf_type').hide();
+   
+   $('#youtube').on('click',function(event){
+      
+       $('#youtube_url').show();
+       // event.preventDefault();
+   });
+   
+   $('#html_video').on('click',function(event){
+      
+       $('#html5_video').show();
+   });
+   
+   $('#youtube').on('click',function(event){
+      // event.preventDefault();
+       $('youtube_url').show();
+   });
+   
+        var options = {
+            beforeSend: function () {
+
+
+            },
+            complete: function (response) {
+                // Output AJAX response to the div container
+                $(".upload-image-messages").html(response.responseText);
+
+            }
+        };
+
+        // bind 'myForm' and provide a simple callback function 
+        $('#subject_content_form').ajaxForm(options);
+
+
+    
 });
 function fix_sidebar() {
     //Make sure the body tag has the .fixed class
@@ -156,6 +180,8 @@ function fix_sidebar() {
         color: "rgba(0,0,0,0.2)"
     });
 }
+
+
 
 /*END DEMO*/
 

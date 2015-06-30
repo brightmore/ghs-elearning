@@ -1,10 +1,92 @@
-/*==============================================
-    GENERAL  STYLES    
- =============================================*/
-body {
-    font-family: Verdana;
-    padding-top: 70px; /* REQUIRED FOR FIXED NAVBAR*/
+/*GENERAL*/
+body{
+    
 }
+a {
+    color:#fff;
+}
+
+h1,h2,h3,h4,h5,h6{
+/*    padding: 0;
+    margin: 1em;*/
+}
+
+.main_content a{
+    color:#000;
+}
+
+/*bootstrap overwrite*/
+.popover{
+    background-color: #fff;
+    color: #000;
+}
+
+.breadcrumb{
+    margin: 0;
+    padding: 0.7em;
+}
+/*end of bootstrap overwrite*/
+.tree li {
+    margin: 0px 0;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0px 5px;
+}
+.tree li::before {
+    content:'';
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    right: auto;
+    left: -20px;
+    border-left: 1px solid #ccc;
+    bottom: 50px;
+}
+.tree li::after {
+    content:'';
+    position: absolute;
+    top: 30px;
+    width: 25px;
+    height: 20px;
+    right: auto;
+    left: -20px;
+    border-top: 1px solid #ccc;
+}
+.tree li a {
+    display: inline-block;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #666;
+    font-family: arial, verdana, tahoma;
+    font-size: 11px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+/*Remove connectors before root*/
+ .tree > ul > li::before, .tree > ul > li::after {
+    border: 0;
+}
+/*Remove connectors after last child*/
+ .tree li:last-child::before {
+    height: 30px;
+}
+/*Time for some hover effects*/
+
+/*We will apply the hover effect the the lineage of the element also*/
+ .tree li a:hover, .tree li a:hover+ul li a {
+    background: #c8e4f8;
+    color: #000;
+    border: 1px solid #94a0b4;
+}
+/*Connector styles on hover*/
+ .tree li a:hover+ul li::after, .tree li a:hover+ul li::before, .tree li a:hover+ul::before, .tree li a:hover+ul ul::before {
+    border-color: #94a0b4;
+}
+
+/*overwrite bootstrap*/
 
 /*==============================================
    SING UP PAGE  STYLES    
@@ -13,28 +95,28 @@ body {
     padding-top: 60px;
 }
 
-    .signup-wrapper .form-control {
-        max-width: 300px;
-    }
+.signup-wrapper .form-control {
+    max-width: 300px;
+}
 
-    .signup-wrapper .btn {
-        margin-bottom: 5px;
-    }
-    .signup-wrapper label {
-        font-weight:normal;
-        padding-top:10px;
-    }
+.signup-wrapper .btn {
+    margin-bottom: 5px;
+}
+.signup-wrapper label {
+    font-weight:normal;
+    padding-top:10px;
+}
 /* SOCIAL BUTTONS */
 .btn-social {
     color: white;
     opacity: 0.8;
 }
 
-    .btn-social:hover {
-        color: white;
-        opacity: 1;
-        text-decoration: none;
-    }
+.btn-social:hover {
+    color: white;
+    opacity: 1;
+    text-decoration: none;
+}
 
 .btn-facebook {
     background-color: #3b5998;
@@ -43,3 +125,475 @@ body {
 .btn-google {
     background-color: #c32f10;
 }
+
+
+#branding,#sidebar > header{
+    height: 6em;
+    background-color: #31ba00;
+}
+
+.border-bottom-style{
+    border-bottom: 2px #31ba00 solid;
+}
+
+/*subject page style*/
+.subject_detail_top{
+    padding: 1.6em 0 ;
+}
+/*end of subject*/
+/*sidebar menu*/
+#sidebar{
+    background-color: #31ba00;
+}
+
+/*#sidebar a{
+    color: #FFF;
+}*/
+
+#sidebar .sidebar-form input:focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-color: transparent!important;
+}
+.front .treemenu, #sidebar .sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.front .treemenu,#sidebar .sidebar-menu > li {
+    margin: 0;
+    padding: 0;
+}
+
+.front .treemenu,#sidebar .sidebar-menu > li > a {
+    padding: 12px 5px 12px 15px;
+    display: block;
+}
+
+#sidebar .sidebar-menu > li > a > .fa,
+#sidebar .sidebar-menu > li > a > .glyphicon,
+#sidebar .sidebar-menu > li > a > .ion {
+    width: 20px;
+}
+.front .treemenu .treeview-menu, #sidebar .sidebar-menu .treeview-menu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.front .treemenu .treeview-menu > li, #sidebar .sidebar-menu .treeview-menu > li {
+    margin: 0;
+}
+
+.front .treemenu .treeview-menu > li > a, #sidebar .sidebar-menu .treeview-menu > li > a {
+    padding: 5px 5px 5px 15px;
+    display: block;
+    font-size: 14px;
+    margin: 0px 0px;
+}
+
+#sidebar .sidebar-menu .treeview-menu > li > a > .fa,
+#sidebar .sidebar-menu .treeview-menu > li > a > .glyphicon,
+#sidebar .sidebar-menu .treeview-menu > li > a > .ion {
+    width: 20px;
+}
+/*end of side menu*/
+
+/*
+    Navbar custom dropdown menu
+------------------------------------
+*/
+.navbar-nav > .notifications-menu > .dropdown-menu,
+.navbar-nav > .messages-menu > .dropdown-menu,
+.navbar-nav > .tasks-menu > .dropdown-menu {
+  width: 280px;
+  padding: 0 0 0 0!important;
+  margin: 0!important;
+  top: 100%;
+  border: 1px solid #dfdfdf;
+  -webkit-border-radius: 4px !important;
+  -moz-border-radius: 4px !important;
+  border-radius: 4px !important;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li.header,
+.navbar-nav > .messages-menu > .dropdown-menu > li.header,
+.navbar-nav > .tasks-menu > .dropdown-menu > li.header {
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-radius-topleft: 4px;
+  -moz-border-radius-topright: 4px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: #ffffff;
+  padding: 7px 10px;
+  border-bottom: 1px solid #f4f4f4;
+  color: #444444;
+  font-size: 14px;
+}
+
+.navbar-nav > .notifications-menu > .dropdown-menu > li.header:after,
+.navbar-nav > .messages-menu > .dropdown-menu > li.header:after,
+.navbar-nav > .tasks-menu > .dropdown-menu > li.header:after {
+  bottom: 100%;
+  right: 92%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(255, 255, 255, 0);
+  border-bottom-color: #ffffff;
+  border-width: 7px;
+  margin-right:  -7px;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li.footer > a,
+.navbar-nav > .messages-menu > .dropdown-menu > li.footer > a,
+.navbar-nav > .tasks-menu > .dropdown-menu > li.footer > a {
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-topleft: 0px;
+  -moz-border-radius-topright: 0px;
+  -moz-border-radius-bottomright: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-size: 12px;
+  background-color: #f4f4f4;
+  padding: 7px 10px;
+  border-bottom: 1px solid #eeeeee;
+  color: #000;
+  text-align: center;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li.footer > a:hover,
+.navbar-nav > .messages-menu > .dropdown-menu > li.footer > a:hover,
+.navbar-nav > .tasks-menu > .dropdown-menu > li.footer > a:hover {
+  background: #f4f4f4;
+  text-decoration: none;
+  font-weight: normal;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu,
+.navbar-nav > .messages-menu > .dropdown-menu > li .menu,
+.navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: hidden;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a,
+.navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a,
+.navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a {
+  display: block;
+  white-space: nowrap;
+  /* Prevent text from breaking */
+  border-bottom: 1px solid #f4f4f4;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a:hover,
+.navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a:hover,
+.navbar-nav > .tasks-menu > .dropdown-menu > li .menu > li > a:hover {
+  background: #f6f6f6;
+  text-decoration: none;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a {
+  font-size: 12px;
+  color: #444444;
+}
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .glyphicon,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .fa,
+.navbar-nav > .notifications-menu > .dropdown-menu > li .menu > li > a > .ion {
+  font-size: 20px;
+  width: 50px;
+  text-align: center;
+  padding: 15px 0px;
+  margin-right: 5px;
+  /* Default background and font colors */
+  background: #00c0ef;
+  color: #f9f9f9;
+  /* Fallback for browsers that doesn't support rgba */
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-nav > .user-menu > .dropdown-menu {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  padding: 1px 0 0 0;
+  border-top-width: 0;
+  width: 280px;
+}
+.navbar-nav > .user-menu > .dropdown-menu:after {
+  bottom: 100%;
+  right: 10px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(255, 255, 255, 0);
+  border-bottom-color: #ffffff;
+  border-width: 10px;
+  margin-left: -10px;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+  height: 175px;
+  padding: 10px;
+  background: #3c8dbc;
+  text-align: center;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
+  z-index: 5;
+  height: 90px;
+  width: 90px;
+  border: 8px solid;
+  border-color: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
+  z-index: 5;
+  color: #f9f9f9;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 17px;
+  text-shadow: 2px 2px 3px #333333;
+  margin-top: 10px;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p > small {
+  display: block;
+  font-size: 12px;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body {
+  padding: 15px;
+  border-bottom: 1px solid #f4f4f4;
+  border-top: 1px solid #dddddd;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body:before,
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body:after {
+  display: table;
+  content: " ";
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body:after {
+  clear: both;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body > div > a {
+  color: #0073b7;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-footer {
+  background-color: #f9f9f9;
+  padding: 10px;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-footer:before,
+.navbar-nav > .user-menu > .dropdown-menu > li.user-footer:after {
+  display: table;
+  content: " ";
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-footer:after {
+  clear: both;
+}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-footer .btn-default {
+  color: #666666;
+}
+/* Add fade animation to dropdown menus */
+.open > .dropdown-menu {
+  animation-name: fadeAnimation;
+  animation-duration: .7s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: fadeAnimation;
+  -webkit-animation-duration: .7s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: ease;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-name: fadeAnimation;
+  -moz-animation-duration: .7s;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-timing-function: ease;
+  -moz-animation-fill-mode: forwards;
+}
+@keyframes fadeAnimation {
+  from {
+    opacity: 0;
+    top: 120%;
+  }
+  to {
+    opacity: 1;
+    top: 100%;
+  }
+}
+@-webkit-keyframes fadeAnimation {
+  from {
+    opacity: 0;
+    top: 120%;
+  }
+  to {
+    opacity: 1;
+    top: 100%;
+  }
+}
+/* Fix dropdown menu for small screens to display correctly on small screens */
+@media screen and (max-width: 767px) {
+  .navbar-nav > .notifications-menu > .dropdown-menu,
+  .navbar-nav > .user-menu > .dropdown-menu,
+  .navbar-nav > .tasks-menu > .dropdown-menu,
+  .navbar-nav > .messages-menu > .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    border-right: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    border-left: 1px solid #dddddd;
+    background: #ffffff;
+  }
+}
+/* Fix menu positions on xs screens to appear correctly and fully */
+@media screen and (max-width: 480px) {
+  .navbar-nav > .notifications-menu > .dropdown-menu > li.header,
+  .navbar-nav > .tasks-menu > .dropdown-menu > li.header,
+  .navbar-nav > .messages-menu > .dropdown-menu > li.header {
+    /* Remove arrow from the top */
+  }
+  .navbar-nav > .notifications-menu > .dropdown-menu > li.header:after,
+  .navbar-nav > .tasks-menu > .dropdown-menu > li.header:after,
+  .navbar-nav > .messages-menu > .dropdown-menu > li.header:after {
+    border-width: 0px!important;
+  }
+  .navbar-nav > .tasks-menu > .dropdown-menu {
+    position: absolute;
+    right: -120px;
+    left: auto;
+  }
+  .navbar-nav > .notifications-menu > .dropdown-menu {
+    position: absolute;
+    right: -170px;
+    left: auto;
+  }
+  .navbar-nav > .messages-menu > .dropdown-menu {
+    position: absolute;
+    right: -210px;
+    left: auto;
+  }
+}
+
+.forum .forum-post-panel {
+    margin-bottom: 1em;
+}
+
+.forum.media-list li img.avatar {
+    display: block;
+    margin: 0 auto;
+}
+
+.forum.media-list li .user-info {
+    text-align: center;
+    width: 8em;
+}
+
+@media (max-width: 760px) {
+    .forum.media-list li .user-info {
+        float: none;
+        width: 100%;
+        margin-bottom: 1em;
+    }
+}
+
+
+.form{
+	background:#f1f1f1; 
+        width:95%; margin:0 auto; 
+        padding-left:50px; 
+        padding-top:20px;
+}
+.form fieldset{
+    border:0px;
+    padding:0px; 
+    margin:0px;
+}
+.form p.contact { 
+    font-size: 12px; 
+    margin:0px 0px 10px 0;
+    line-height: 14px; 
+    font-family:Arial, Helvetica;
+}
+
+.form input[type="text"] { width: 90%; }
+.form input[type="email"] { width: 90%; }
+.form input[type="password"] { width:90%; }
+.form input.birthday{width:60px;}
+.form input.birthyear{width:120px;}
+.form label { 
+    color: #000;
+    font-weight:bold;
+    font-size: 12px;
+    font-family:Arial, Helvetica; 
+}
+.form label.month {width: 135px;}
+.form input, textarea { 
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(122, 192, 0, 0.15);
+    padding: 7px;
+    font-family: Keffeesatz, Arial;
+    color: #4b4b4b;
+    font-size: 14px;
+    -webkit-border-radius: 5px;
+    margin-bottom: 15px; 
+    margin-top: -10px; 
+}
+.form input:focus, textarea:focus { 
+    border: 1px solid #ff5400; 
+    background-color: rgba(255, 255, 255, 1);
+}
+.form .select-style {
+  -webkit-appearance: button;
+  -webkit-border-radius: 2px;
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  -webkit-user-select: none;
+  background-image: url(img/select-arrow.png), 
+    -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+  background-position: center right;
+  background-repeat: no-repeat;
+  border: 0px solid #FFF;
+  color: #555;
+  font-size: inherit;
+  margin: 0;
+  overflow: hidden;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;}
+.form .gender {
+  width:410px;
+  }
+.form input.buttom{ background: #4b8df9;
+        display: inline-block;
+        padding: 5px 10px 6px;
+        color: #fbf7f7;
+        text-decoration: none;
+        font-weight: bold;
+        line-height: 1;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-box-shadow: 0 1px 3px #999;
+        -webkit-box-shadow: 0 1px 3px #999;
+        box-shadow: 0 1px 3px #999;
+        text-shadow: 0 -1px 1px #222;
+        border: none; position: relative;
+        cursor: pointer;
+        font-size: 14px;
+        font-family:Verdana, Geneva, sans-serif;
+}
+.form input.buttom:hover{ background-color: #2a78f6; }

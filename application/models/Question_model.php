@@ -73,7 +73,6 @@ class Question_model extends CI_Model {
             $search = mysql_escape_string($search);
         }
 
-
         //$this->db->where($where, NULL, FALSE);
         $this->db->order_by($sort_field, $sortby);
         $this->db->limit($limit, $start);

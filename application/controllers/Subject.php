@@ -5,7 +5,7 @@ class Subject extends CI_Controller {
     private $username;
     private $uploadLocation = "./uploads/subjects";
     private $_table = 'subject';
-    
+
     public function __construct() {
         parent::__construct();
 
@@ -138,8 +138,20 @@ class Subject extends CI_Controller {
      * exceptions
      *
      */
-    public function addSubject() {
+    public function add_subject_content($subject_id = NULL) {
+         $subjects_list = $this->msubject->get_subjects_for_view();
+         $subjects = array();
+            foreach ($subjects_list as $value) {
+                $subjects[$value->subject_id] = $value->subject_name;
+            }
+
+        $content['subjects'] = $subjects;
         
+        $content['csrf'] = _get_csrf_nonce();
+        $content['page'] = "Add subject Content";
+        $data["title"] = $content['page'];
+        $data['content'] = $this->load->view('admin/subject_content', $content,TRUE);
+        $this->load->view('admin/template', $data);
     }
 
     /**
@@ -192,12 +204,12 @@ class Subject extends CI_Controller {
         $data = array();
 
 
-        $this->form_validation->set_rules("subject_name", "Subject name", "trim|required");
-        $this->form_validation->set_rules("slug", "slug", "trim|required");
-        $this->form_validation->set_rules("rank", "rank", "trim|required");
-        $this->form_validation->set_rules("course_id", 'Course ID', 'trim|required');
-        $this->form_validation->set_rules("subject_description", "description", "trim|required");
-        $this->form_validation->set_rules('instructors','Instructors','required');
+        $this->form_validation->set_rules("subject_name", "Subject name", " strip_tags|trim|required|max_length[500]");
+        $this->form_validation->set_rules("slug", "slug", "trim|required|max_length[100]");
+        $this->form_validation->set_rules("rank", "rank", "trim|required|integer|max_length[3]");
+        $this->form_validation->set_rules("course_id", 'Course ID', 'trim|requiredmax_length[5]');
+        $this->form_validation->set_rules("subject_description", "Subject Description", "trim|required");
+        $this->form_validation->set_rules('instructors', 'Instructors', 'required');
 
 
 //        $video_type = $this->input->post('video_type');
@@ -224,8 +236,8 @@ class Subject extends CI_Controller {
                 $file_data = $this->upload->data();
                 $video_url = $this->uploadLocation . '/' . $file_data['file_name'];
             }
-        }else{
-            $this->form_validation->set_rules('youtubeVideo','Youtube Video Url','trim|required');
+        } else {
+            $this->form_validation->set_rules('youtubeVideo', 'Youtube Video Url', 'trim|required');
         }
 
         if ($this->form_validation->run() == FALSE) {
@@ -242,14 +254,11 @@ class Subject extends CI_Controller {
             $course_id = $this->input->post('course_id');
             $subject_name = $this->input->post('subject_name');
             $slug = $this->input->post('slug');
-            $description = $this->input->post('description');
-//            $content_type = $this->input->post('content_type');
-//            $image = $this->input->post('image');
-//            $content = $this->input->post('content');
-
+            $description = $this->input->post('subject_description');
             $instructors_ids = $this->input->post('instructors');
+            $rank = $this->input->post('rank');
 
-            $totalCourse = $this->db->count_all($this->table);
+            $totalCourse = $this->db->count_all($this->_table);
             $subject_id = 'S' . str_pad($totalCourse, 4, '0', STR_PAD_LEFT);
 
             $data_inser_array = array(
@@ -258,14 +267,15 @@ class Subject extends CI_Controller {
                 'subject_name' => $subject_name,
                 'slug' => $slug,
                 'description' => $description,
-//                'content_type' => $content_type,
-//                'image' => $image,
-//                'content' => $content,
                 'rank' => $rank,
+                'instructors_ids' => serialize($instructors_ids)
             );
 
             if ($video_url) {
-                $data_inser_array['video_url'] = $video_url;
+                $data_inser_array['video_intro_url'] = $video_url;
+                $data_inser_array['video_intro_type'] = "mp4";
+            } else {
+                $data_inser_array['video_intro_url'] = $this->input->post('youtubeVideo');
             }
 
             if (isset($id) && !empty($id)) {
@@ -278,7 +288,6 @@ class Subject extends CI_Controller {
                 $message['is_redirect'] = true;
             } else {
 
-                $rank = $this->input->post('rank');
                 $this->db->select("rank");
                 $this->db->from('subject');
                 $this->db->where('course_id', $course_id);
@@ -286,6 +295,7 @@ class Subject extends CI_Controller {
                 $query = $this->db->get();
 
                 if ($query->num_rows() === 0) {
+
                     //$insert = $this->CourseContent_model->create('courseContent',$data_inser_array);
                     $insert = $this->db->insert('subject', $data_inser_array);
                     $message['is_redirect'] = true;
@@ -300,10 +310,10 @@ class Subject extends CI_Controller {
                         $message['is_redirect'] = false;
                         $data = "Something Went Wrong..";
                     }
-                }else{
+                } else {
                     $message['is_error'] = TRUE;
                     $message['is_redirect'] = FALSE;
-                    $data = "The rank is taking, Two subjects can't have same rank number.";
+                    $data = "The rank is taking, Two subjects can't have the same ranking number.";
                 }
             }
         }

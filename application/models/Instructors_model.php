@@ -104,5 +104,9 @@ class Instructors_model extends CI_Model {
     function getCoursesForInstructor($instructor_id) {
         
     }
+    
+    function get_all_instructors(){
+        $this->db->select("");
+    }
 
 }

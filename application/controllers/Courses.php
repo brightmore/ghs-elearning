@@ -88,7 +88,10 @@ class Courses extends CI_Controller {
         $data['title'] = "Course Management";
         $data['content'] = $this->load->view('admin/create_courses', $content, TRUE);
         $this->load->view('admin/template', $data);
+       
     }
+    
+    
 
     /**
      * Functon edit
@@ -294,7 +297,7 @@ class Courses extends CI_Controller {
             $this->upload->initialize($config);
             $this->upload->do_upload("banner_url");
             $error = $this->upload->display_errors();
-            echo "ok";
+           
             if (empty($error)) {
                 $file_data = $this->upload->data();
                 $this->course_banner = $file_data['file_name'];

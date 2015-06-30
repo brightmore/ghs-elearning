@@ -17,7 +17,7 @@ class Messager_model extends CI_Model {
     public function __construct() {
 
         parent::__construct();
-        $this->load->database();
+        $this->load->library('email');
     }
 
     /**
@@ -97,17 +97,79 @@ class Messager_model extends CI_Model {
             //search condition      
         }
 
-
         //$this->db->where($where, NULL, FALSE);
         return $this->db->get()->row()->numrows;
+    }
+
+    function sent_bulk_email($list, $title, $message, $attachment) {
+        $config['protocol'] = 'sendmail';
+        $config['mailpath'] = '/usr/sbin/sendmail';
+        $config['charset'] = 'iso-8859-1';
+        $config['wordwrap'] = TRUE;
+        $config['bcc_batch_mode'] = TRUE;
+        $config['bcc_batch_size'] = 500;
+        $config['mailtype'] = 'html';
+        $this->email->initialize($config);
+
+        $ids = implode(',', $list);
+
+        $sql = "SELECT username,email FROM users WHERE id IN[?]";
+        $query = $this->db->query($sql, array($ids));
+
+        $data = array();
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+            $query->free_result();
+        }
+
+        if (empty($data)) {
+            return FALSE;
+        }
+        
+        $mailing_list = array();
+        try {
+            foreach($data as $value){
+                $mailing_list[$value->username] = $value->email;
+            }
+        } catch (Exception $exc) {
+            log_message('error', "[location]:Messager_model,[method]:send_bulk_mail, [error]:" . $exc->getMessage());
+            echo $exc->getTraceAsString();
+        }
+    }
+
+    function send_bulk_msg($list, $sender_id, $message) {
+        if (empty($list) || $sender_id == FALSE || empty($message)) {
+            return false;
+        }
+
+        $now = time();
+        $data = array();
+        foreach ($list as $value) {
+            $data[] = array(
+                'mgs' => $message,
+                'dateCreateOn' => $now,
+                'sender' => $sender_id,
+                'receiver' => $value
+            );
+        }
+
+        try {
+            $this->db->insert_batch('mytable', $data);
+            if ($this->db->affected_rows() > 0) {
+                return TRUE;
+            }
+
+            return FALSE;
+        } catch (Exception $exc) {
+            log_message('error', "[location]:Messager_model, [error]:" . $exc->getMessage());
+            echo $exc->getTraceAsString();
+        }
     }
 
     function get_messages_count($username) {
         $this->db->select("COUNT(*) AS numrows");
         $this->db->from($this->_table);
-        $where = "receiver = {$username}";
-
-        $this->db->where($where);
+        $this->db->where(array('receiver' => $username));
         return $this->db->get()->row()->numrows;
     }
 

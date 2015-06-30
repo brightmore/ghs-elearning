@@ -94,7 +94,7 @@ class Takecourse_model extends CI_Model {
     function studentTakesubject($course_id,$subject_id){
         date_default_timezone_set("Africa/Accra");
         
-       $start_datetime =  mktime();
+       $start_datetime =  time();
         
         $data = array(
                     'subject_id'=>$subject_id,

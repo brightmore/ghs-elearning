@@ -46,9 +46,10 @@ $title_msg = ($id == 0) ? "Create" : " Update";
 <!--                                    <i class="fa fa-comments-o"></i>-->
                     <h3 class="box-title">Course Management</h3>
                 </div>
-                <div class="box-body " style="overflow:auto"> 
+                <div class="box-body"> 
                     <?php foreach ($subjects as $row): ?>
-                        <div class="col-lg-6 col-md-6 col-sm-12  <?php echo $row->course_type ?>">
+                        <div class="col-lg-6 col-md-6 col-sm-12 ">
+                            <h3><?php echo $row->course_type ?></h3>
                             <ul>
                                 <li><a href="#"><?php echo $row->cat_name ?></a> >></li>
                                 <li><a href="#"><?php echo $row->course_name ?></a> >></li>

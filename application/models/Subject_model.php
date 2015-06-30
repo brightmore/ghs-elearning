@@ -113,6 +113,21 @@ class Subject_model extends CI_Model {
         return FALSE;
     }
     
+    function get_subject_content_for_instructor($user_id){
+        $this->db->select("id,title,date_created,summary");
+        $this->db->from('subject_content');
+        $this->db->where(array('instructor_id'=>$user_id));
+        $query = $this->db->get();
+        
+        $data = array();
+        if($query->num_rows()){
+            $data = $query->result();
+            $query->free_result();
+        }
+        
+        return $data;
+    }
+    
     function getSubjectDetails($subject_id = NULL){
         $this->db->select('subject.*,courses.*,course_category.cat_name');
         $this->db->from($this->_table);
@@ -159,6 +174,8 @@ class Subject_model extends CI_Model {
         return FALSE;
     }
     
+    
+    
     function getSubjects(){
         $this->db->select('*');
         $this->db->from($this->_table);
@@ -172,6 +189,21 @@ class Subject_model extends CI_Model {
         
         return $data;
     }
+    
+    function get_subjects_for_view(){
+        $this->db->select('subject_id,subject_name');
+        $this->db->from($this->_table);
+        $query = $this->db->get();
+        
+        $data = array();
+        if($query->num_rows() > 0){
+            $data = $query->result();
+            $query->free_result();
+        }
+        
+        return $data;
+    }
+    
     
     function removeSubject($subject_id){
         

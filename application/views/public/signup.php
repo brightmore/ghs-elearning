@@ -1,52 +1,58 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-4 well well-sm">
-            <legend><a href="http://www.jquery2dotnet.com"><i class="glyphicon glyphicon-globe"></i></a> Sign up!</legend>
-            <form action="#" method="post" class="form" role="form">
-            <div class="row">
-                <div class="col-xs-6 col-md-6">
-                    <input class="form-control" name="firstname" placeholder="First Name" type="text"
-                        required autofocus />
-                </div>
-                <div class="col-xs-6 col-md-6">
-                    <input class="form-control" name="lastname" placeholder="Last Name" type="text" required />
-                </div>
-            </div>
-            <input class="form-control" name="youremail" placeholder="Your Email" type="email" />
-            <input class="form-control" name="reenteremail" placeholder="Re-enter Email" type="email" />
-            <input class="form-control" name="password" placeholder="New Password" type="password" />
-            <label for="">
-                Birth Date</label>
-            <div class="row">
-                <div class="col-xs-4 col-md-4">
-                    <select class="form-control">
-                        <option value="Month">Month</option>
-                    </select>
-                </div>
-                <div class="col-xs-4 col-md-4">
-                    <select class="form-control">
-                        <option value="Day">Day</option>
-                    </select>
-                </div>
-                <div class="col-xs-4 col-md-4">
-                    <select class="form-control">
-                        <option value="Year">Year</option>
-                    </select>
-                </div>
-            </div>
-            <label class="radio-inline">
-                <input type="radio" name="sex" id="inlineCheckbox1" value="male" />
-                Male
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="sex" id="inlineCheckbox2" value="female" />
-                Female
-            </label>
-            <br />
-            <br />
-            <button class="btn btn-lg btn-primary btn-block" type="submit">
-                Sign up</button>
-            </form>
+           
+          <div  class="form">
+    		<form id="registration"> 
+    			<p class="contact"><label for="name">Name</label></p> 
+    			<input id="name" name="name" placeholder="First and last name" required="" tabindex="1" type="text"> 
+    			 
+    			<p class="contact"><label for="email">Email</label></p> 
+    			<input id="email" name="email" placeholder="example@domain.com" required="" type="email"> 
+                
+                <p class="contact"><label for="username">Create a username</label></p> 
+    			<input id="username" name="username" placeholder="username" required="" tabindex="2" type="text"> 
+    			 
+                <p class="contact"><label for="password">Create a password</label></p> 
+    			<input type="password" id="password" name="password" required=""> 
+                <p class="contact"><label for="repassword">Confirm your password</label></p> 
+    			<input type="password" id="repassword" name="repassword" required=""> 
+        
+               <fieldset>
+                 <label>Birthday</label>
+                  <label class="month"> 
+                  <select class="select-style" name="BirthMonth">
+                  <option value="">Month</option>
+                  <option  value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03" >March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12" >December</option>
+                  </label>
+                 </select>    
+                <label>Day<input class="birthday" maxlength="2" name="BirthDay"  placeholder="Day" required=""></label>
+                <label>Year <input class="birthyear" maxlength="4" name="BirthYear" placeholder="Year" required=""></label>
+              </fieldset>
+  
+            <select class="select-style gender" name="gender">
+            <option value="select">i am..</option>
+            <option value="m">Male</option>
+            <option value="f">Female</option>
+            <option value="others">Other</option>
+            </select><br><br>
+            
+            <p class="contact"><label for="phone">Mobile phone</label></p> 
+            <input id="phone" name="phone" placeholder="phone number" required="" type="text"> <br>
+            <input class="buttom" name="submit" id="submit" tabindex="5" value="Sign me up!" type="submit"> 	 
+   </form> 
+</div>  
         </div>
     </div>
 </div>

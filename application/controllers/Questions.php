@@ -39,6 +39,7 @@ class Questions extends CI_Controller {
         }
 
         $content['page'] = "Question Bank";
+        $content['csrf'] = _get_csrf_nonce();
         $content['subjects'] = $subjects;
         $content['courses'] = $this->mcourses->getCoursesForView();
         $data['title'] = "Question Bank Management";
@@ -77,15 +78,15 @@ class Questions extends CI_Controller {
     function deleteQuestion($question_id) {
         $this->db->trans_begin();
 
-        $this->db->delete('question_bank',array('question_id'=>$question_id));
-        $this->db->delete('answer_bank',array('question_id'=>$question_id));
-        
+        $this->db->delete('question_bank', array('question_id' => $question_id));
+        $this->db->delete('answer_bank', array('question_id' => $question_id));
+
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
-             echo json_encode(['result'=>FALSE]);
+            echo json_encode(['result' => FALSE]);
         } else {
             $this->db->trans_commit();
-            echo json_encode(['result'=>TRUE]);
+            echo json_encode(['result' => TRUE]);
         }
     }
 
@@ -159,6 +160,105 @@ class Questions extends CI_Controller {
         $this->load->view('header');
         $this->load->view('create_questionBank', $data);
         $this->load->view('footer');
+    }
+
+    function process_new_question() {
+        if (_valid_csrf_nonce() === FALSE) {
+            $this->session->flashdata('error', 'There is something fishy about the form you just submitted, it fails CSRF Test');
+            redirect("Question/");
+        }
+        
+        $this->form_validation->set_rules('answerA', 'Answer A', 'required|xss_clean');
+        $this->form_validation->set_rules('answerB', 'Answer B', 'required|xss_clean');
+        $this->form_validation->set_rules('answerC', 'Answer C', 'required|xss_clean');
+        $this->form_validation->set_rules('answerD', 'Answer D', 'required|xss_clean');
+        $this->form_validation->set_rules('question_type', 'Question Type', 'required|in_list[pretest,posttest]');
+        $this->form_validation->set_rules('question_mode','Question mode','required|in_list[text,image]');
+        $this->form_validation->set_rules('quetion_text','Question','required|xss_clean');
+        $this->form_validation->set_rules('subject_id','Subject','required|xss_clean');
+        $this->form_validation->set_rules('answers','Answers','required|in_list[a,b,c,d]');
+        $this->form_validation->set_rules('time_span','Time Span','required|greater_than_equal_to[10]|less_than_equal_to[120]');
+
+        $location = './uploads/questions_images';
+
+        
+        
+        if (($this->input->post('question_mode') === 'image')) {
+   
+            $this->form_validation->set_rules('extra','Entra Information about Image/picture uploaded','required|xss_clean');
+        }
+        
+        $data_question = [];
+        
+        if($this->form_validation->run() === TRUE){
+
+            $this->db->select('question');
+            $this->db->from('question_bank');
+            $this->db->where('question',trim($this->input->post('question')));
+            $query = $this->db->get();
+            
+            if($query->num_rows() > 0){
+                
+            }
+            
+            if ($_FILES['question_image']['name'] !== ""){
+                $config['upload_path'] = $location;
+                $config['allowed_types'] = 'jpeg|png|jpg|gif';
+                $config['encrypt_name'] = TRUE;
+                $config['remove_spaces'] = TRUE;
+                $config['max_size'] = '1048';
+
+                $this->load->library('upload');
+                $this->upload->initialize($config);
+                $this->upload->do_upload("question_image");
+                $error = $this->upload->display_errors();
+
+                if (empty($error)){
+                    $file_data = $this->upload->data();
+                    $image = $file_data['file_name'];
+                    $image_location = substr($this->upload_location,2).'/'.$image;
+                    $extra = $this->input->post('extra');
+                    
+                    $data_question['extra'] = $extra;
+                    $data_question['question_image'] = $image_location;
+                    
+                } else {
+                    
+                    echo $error;
+                }
+            }
+            
+            $subject_id = $this->input->post('subject_id');
+            
+            $this->db->select('course_id');
+            $this->db->from('subject');
+            $this->db->where('subject_id',$subject_id);
+            $course_id = $this->db->get()->row()->course_id;
+            
+            $data_question['time_span'] = $this->input->post('time_span');
+            $data_question['question'] = $this->input->post("question_text");
+            $data_question['type'] = $this->input->post('question_type');
+            $data_question['question_type']= $this->input->post('question_mode');
+            $data_question['subject_id'] = $subject_id;
+            $data_question['course_id'] = $course_id;
+            
+            $data_question['answer_a'] = $this->input->post('answerA');
+            $data_question['answer_b'] = $this->input->post('answerB');
+            $data_question['answer_c'] = $this->input->post('answerC');
+            $data_question['answer_d'] = $this->input->post('answerD');
+            $data_question['answer'] = $this->input->post('answers');
+            
+            $this->db->insert('question_bank',$data_question);
+            if($this->db->affected_rows() > 0){
+                echo "inserted";
+            }  else {
+                echo "not inserted";
+            }
+            
+        }else{
+            echo $this->form_validation->error_string();
+        }
+        
     }
 
     /**
@@ -268,8 +368,6 @@ class Questions extends CI_Controller {
             exit('No direct script access allowed');
         }
 
-
-
         $this->load->library('pagination');
 
         $sort_col = $_GET["iSortCol_0"];
@@ -280,11 +378,9 @@ class Questions extends CI_Controller {
 
         $config["total_rows"] = $this->questionBank_model->count_all_rows($search);
 
-
         $this->pagination->initialize($config);
 
         $data["links"] = $this->pagination->create_links();
-
 
         $sort_col = $_GET["iSortCol_0"];
         $sort_dir = $_GET["sSortDir_0"];
@@ -331,8 +427,6 @@ class Questions extends CI_Controller {
 
             $condition = array("question_id" => $pid);
             // $params = array("is_active" => 0);
-
-
 
             $insert = $this->db->delete("questionBank", $condition);
 
