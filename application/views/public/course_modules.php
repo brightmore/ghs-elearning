@@ -3,7 +3,7 @@
         <div class="tree col-lg-4 col-md-4 col-sm-6">
             <ul>
                 <li>
-                    <a href="#"><?php echo $value->cat_name ?> :: module</a>
+                    <a href="#"><?php echo $value->cat_name ?> :: Category</a>
                     <?php $courses = get_courses_category($value->cat_id) ?>
                     <?php if ($courses): ?>
                         <ul>

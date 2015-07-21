@@ -10,6 +10,8 @@
         <!-- Ionicons -->
         <link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo base_url('assets/css/jquery.toast.css') ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo base_url('assets/css/paper-collapse.min.css') ?>" rel="stylesheet" type="text/css" />
+        
         <link href="<?php echo base_url('assets/css/publicstyle.css') ?>" rel="stylesheet" type="text/css" />
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -360,6 +362,7 @@
         <!--<script src="<?php echo base_url() ?>assets/js/bootstrap.min.js" type="text/javascript"></script>-->
         <script src="<?php echo base_url() ?>assets/js/jquery.toast.min.js" type="text/javascript"></script>
         <script src="<?php echo base_url() ?>assets/js/jquery.tmpl.min.js" type="application/javascript"></script>
+        <script src="<?php echo base_url() ?>assets/js/paper-collapse.min.js" type="application/javascript"></script>
         <script src="<?php echo base_url() ?>assets/js/publicjs.js" type="text/javascript"></script>
     </body>
 </html>

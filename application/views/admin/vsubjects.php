@@ -129,7 +129,7 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                         </div>
                         <div class="alert alert-info">
                             Ranking determines the order in which subjects under course should follow when taking the course. it means subjects with lower rank should be taken first.<br>
-                            Or leave it blank to be taken at any time without following any order.
+                            Or leave it blank.
                         </div>
                     </div>
 
@@ -154,7 +154,13 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                     </div>-->
                      <div class="form-group">
                         <label>Instructors</label>
-                        <div> <?php echo form_multiselect('instructors',$instructors); ?></div>
+                        <div> 
+                            <select name="instructors" multiple="" class="form-control" size="6">
+                                <?php foreach ($instructors as $instructor){?>
+                                <option value="<?php echo $instructor->id ?>"><?php echo $instructor->username?></option> 
+                                <?php } ?>
+                            </select>
+                        </div>
 <!--                        <div class="alert-info alert">
                             Moderator is  an instructor or a faculty member who is in charge of the course.
                         </div>-->

@@ -46,12 +46,23 @@ class Event_model extends CI_Model {
         return $data;
     }
     
+    function all_event($limit,$offset){
+        
+      $query =  $this->db->get('events',$limit,$offset);
+        $data = array();
+        if($query->num_rows()){
+            $data = $query->result();
+            return $data;
+        }
+        
+        return $data;
+    }
     
     function get_event($event_id)
     {
         $query = $this->db->select('*')
                 ->form('event')
-                ->where(array('eventid'=>$event_id))
+                ->where(array('id'=>$event_id))
                 ->get();
         if($query->num_rows() == 1){
             return $query->row();
@@ -60,7 +71,7 @@ class Event_model extends CI_Model {
     }
     
     function update_event($data,$event_id){
-        $this->db->update($data,array('eventid'=>$event_id));
+        $this->db->update($data,array('id'=>$event_id));
         if($this->db->affected_rows() > 0){
             return TRUE;
         }
@@ -96,4 +107,6 @@ class Event_model extends CI_Model {
     function current_event($limit = 10){
         
     }
+    
+    
 }

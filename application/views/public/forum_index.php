@@ -1,13 +1,13 @@
 
-<div class="container" style="margin-top: 35px">
-  <div class="page-header page-heading">
+
+<!--  <div class="page-header page-heading">
     <h1 class="pull-left">Forums</h1>
     <ol class="breadcrumb pull-right where-am-i">
       <li><a href="#">Forums</a></li>
       <li class="active">List of topics</li>
     </ol>
     <div class="clearfix"></div>
-  </div>
+  </div>-->
   <p class="lead">This is the right place to discuss any ideas, critics, feature requests and all the ideas regarding our website. Please follow the forum rules and always check FAQ before posting to prevent duplicate posts.</p>
   <table class="table forum table-striped">
     <thead>
@@ -94,5 +94,4 @@
       </tr>
     </tbody>
   </table>
-</div>
-</div>
+

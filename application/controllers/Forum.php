@@ -28,20 +28,26 @@ class Forum extends CI_Controller {
     function create_channel() {
         // insert csrf check
         $content['csrf'] = _get_csrf_nonce();
-        $content['channels'] = $this->mforum->getChannels();
+        $content['channels'] = $this->mforum->get_channels();
+        $data['page'] = "Channels";
         $data['title'] = "Forum Channel Management";
         $data['content'] = $this->load->view('admin/create_forum_channel', $content, TRUE);
         $this->load->view('admin/template', $data);
     }
-
+    
+    
+    
     function create_thread() {
+        $content['channels'] = $this->mforum->get_channels();
         $content['csrf'] = _get_csrf_nonce();
+        $data['page'] = "Thread";
         $data['title'] = "Forum Thread Management";
         $data['content'] = $this->load->view('admin/create_forum_thread', $content, TRUE);
         $this->load->view('admin/template', $data);
     }
 
     public function create_posts() {
+        $data['page'] = "Create Posts";
         $content['csrf'] = _get_csrf_nonce();
         $data['title'] = "POST Management";
         $data['content'] = $this->load->view('admin/create_forum_post', $content, TRUE);
@@ -56,7 +62,7 @@ class Forum extends CI_Controller {
         }
         
         $this->form_validation->set_rules('thread_id','thread ID','required|numeric');
-        $this->form_validation->set_rules('post','Post','required');
+        $this->form_validation->set_rules('post','Post','required|xss_clean');
          
         if($this->form_validation->run() === FALSE){
             $this->error['form_error'] = $this->form_validation->error_array();
@@ -64,7 +70,7 @@ class Forum extends CI_Controller {
         }
         
         
-        $post = htmlentities(trim($this->input->post('post')),ENT_COMPAT);
+        $post = trim($this->input->post('post'));
         $user_id = $this->session->userdata('user_id');
         $thread_id = $this->input->post('thread_id');
         $data = ['text'=>$post,'thread_id'=>$thread_id,'user_id'=>$user_id];
@@ -81,12 +87,13 @@ class Forum extends CI_Controller {
     public function process_thread_form() {
         if (_valid_csrf_nonce() === FALSE) {
             $this->session->flashdata('error', 'There is something fishy about the form you just submitted, it fails CSRF Test');
-            redirect("Forum/create_channel");
+            redirect("/index.php/Forum/create_thread");
         }
 
-        $this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[500]');
-        $this->form_validation->set_rules("slug", 'Slug', 'required|trim|max_length[500]');
+        $this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[500]|xss_clean');
+        $this->form_validation->set_rules("slug", 'Slug', 'required|trim|max_length[500]|xss_clean');
         $this->form_validation->set_rules('channel_id', 'Channel', 'required|trim|max_length[8]');
+//        $this->form_validation->set_rules('description','Description','required|trim|xss_clean');
 
         if ($this->form_validation->run() === FALSE) {
             $this->error['form_error'] = $this->form_validation->error_string();
@@ -98,6 +105,10 @@ class Forum extends CI_Controller {
         $slug = trim($this->input->post('slug'));
         $channel_id = trim($this->input->post('channel_id'));
         $user_id = trim($this->session->userdata('user_id'));
+        
+         $slug = preg_replace('/:\-/','',$slug);
+        $slug = preg_replace('/\s\s+/', "-", $slug);
+       
 
         $data = ['title' => $title, 'slug' => $slug, 'channel_id' => $channel_id, 'user_id' => $user_id];
         $this->db->insert($this->_table_thread, $data);
@@ -120,14 +131,15 @@ class Forum extends CI_Controller {
 
         if (_valid_csrf_nonce() === FALSE) {
             $this->session->flashdata('error', 'There is something fishy about the form you just submitted, it fails CSRF Test');
-            redirect("Forum/create_channel");
+            redirect("index.php/Forum/create_channel");
         }
 
-        $this->form_validation->set_rules('channel_name', 'Channel name', 'required|trim|callback_channel_name_already_exist|max_length[200]');
+        
+        $this->form_validation->set_rules('channel_name', 'Channel name', 'required|trim|callback_channel_name_already_exist|max_length[500]');
         $this->form_validation->set_rules("slug", 'Slug', 'required|trim|max_length[500]|callback_slug_already_exist');
-        $this->form_validation->set_rules('color', 'Channel Color', 'required|trim|max_length[8]');
+//        $this->form_validation->set_rules('color', 'Channel Color', 'required|trim|max_length[8]');
 
-        if (isset($this->input->post('userfile'))) {
+        if (! empty($this->input->post('userfile'))) {
             $this->form_validation->set_rules("userfile", 'Icon', '');
         }
 
@@ -179,18 +191,17 @@ class Forum extends CI_Controller {
         }
 
 
-
         if (count($this->error) > 0) {
             echo json_encode(array('result' => ['error' => $this->error]));
             return;
         } else {
             $name = $this->input->post('channel_name');
             $slug = $this->input->post('slug');
-            $color = $this->input->post('color');
+          //  $color = $this->input->post('color');
 
             $data['name'] = $name;
             $data['slug'] = $slug;
-            $data['color'] = $color;
+          //  $data['color'] = $color;
             if (isset($icon)) {
                 $data['icon'] = $icon;
             }

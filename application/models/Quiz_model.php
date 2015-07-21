@@ -183,7 +183,7 @@ class Quiz_model extends CI_Model {
         }
     }
     
-     function loadQuiz($quiz_code,$course_id,$type){
+     function loadQuiz($quiz_code){
         //get question list for this quiz
         $this->db->select("*");
         $this->db->from("take_quiz");
@@ -224,6 +224,20 @@ class Quiz_model extends CI_Model {
             return $this->NOTSTUDENT;
         }
         
+        //check if the person assign posttest to course
+        $this->db->select('*');
+        $this->db->from('quiz');
+        $this->db->where('user_id',  $this->user_id);
+        $this->db->where('course_id',$course_id);
+        $this->db->where('quizType','posttest');
+        
+        $q = $this->db->get();
+        
+        if($q->num_rows() > 0){
+            
+        }
+        
+        
         $this->db->select("*");
         $this->db->from("question_bank");
         //$this->db->join("answerBank", "question_bank.question_id = answer_bank.question_id");
@@ -257,13 +271,17 @@ class Quiz_model extends CI_Model {
             ));
             
             //register quiz for user
-            $data_take_quiz = array('quiz_code' => $qcode, 'user_id' => $this->user_id, 'course_id' => $course_id);
+            $data_take_quiz = ['quiz_code' => $qcode, 
+                'user_id' => $this->user_id, 
+                'course_id' => $course_id,'start_date'=>time()];
+            
             $this->db->insert('quiz', $data_take_quiz);
-
+            
+            
         $this->db->trans_complete();
 
         if ($this->db->trans_status() === FALSE) {
-            $error = mysql_error();
+            $error = mysql_error(); 
 
             //@todo log error
              log_message('error','[DB: query @'.$_SERVER['REQUEST_URI']." : error: $error");

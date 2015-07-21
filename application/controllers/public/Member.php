@@ -38,35 +38,61 @@ class Member extends CI_Controller {
 //            $this->_render_page('auth/index', $this->data);
 //        }
     }
-    
+
     //log the user in
     function login() {
-        $this->data['title'] = "Login";
+        if ($this->input->post('login')) {
+            echo "step 2";
+             $this->form_validation->set_rules('email', 'email', 'required');
+                $this->form_validation->set_rules('password', 'Password', 'required');
+            if ($this->form_validation->run() == true) {
+                //check to see if the user is logging in
+                //check for "remember me"
+               
+                $this->data['title'] = "Login";
 
-        //validate form input
-        $this->form_validation->set_rules('identity', 'Identity', 'required');
-        $this->form_validation->set_rules('password', 'Password', 'required');
+                //validate form input
+               
+                $remember = (bool) $this->input->post('remember');
 
-        if ($this->form_validation->run() == true) {
-            //check to see if the user is logging in
-            //check for "remember me"
-            $remember = (bool) $this->input->post('remember');
+                if($this->ion_auth->login($this->input->post('email'), 
+                        $this->input->post('password'), $remember)) {
+                    //if the login is successful
 
-            if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
-                //if the login is successful
+                    $identity = $this->input->post('email');
+                    $user_id = $this->db->select('id')->get_where('users', array('email' => $identity))->row()->id;
+
+                    //redirect them back to the home page
+                    $this->session->set_flashdata('message', $this->ion_auth->messages());
+                    $this->session->set_userdata(array('user_id' => $user_id));
+                    redirect('/index.php/public/Frontier/', 'refresh');
+                } else {
+                    //if the login was un-successful
+                    //redirect them back to the login page
+                    $this->session->set_flashdata('message', $this->ion_auth->errors());
+                    redirect('/index.php/public/Member/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
+                }
+            }else{
+                //the user is not logging in so display the login page
+                //set the flash data error message if there is one
+                $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+
                 
-                $identity = $this->input->post('identity');
-                $user_id = $this->db->select('id')->get_where('users',array('email'=>$identity))->row()->id;
+                $this->data['identity'] = array('name' => 'identity',
+                    'id' => 'identity',
+                    'type' => 'text',
+                    'value' => $this->form_validation->set_value('identity'),
+                );
                 
-                //redirect them back to the home page
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                $this->session->set_userdata(array('user_id'=>$user_id));
-                redirect('/', 'refresh');
-            } else {
-                //if the login was un-successful
-                //redirect them back to the login page
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect('Member/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
+                $this->data['password'] = array('name' => 'password',
+                    'id' => 'password',
+                    'type' => 'password',
+                );
+
+            $this->data['csrf'] = _get_csrf_nonce();
+            $this->load->view('public/partials/header', $this->data);
+            $this->_render_page('authpublic/login', $this->data);
+            $this->load->view('public/partials/footer', $this->data);
             }
         } else {
             //the user is not logging in so display the login page
@@ -83,10 +109,12 @@ class Member extends CI_Controller {
                 'type' => 'password',
             );
 
+            $this->data['csrf'] = _get_csrf_nonce();
             $this->load->view('public/partials/header', $this->data);
             $this->_render_page('authpublic/login', $this->data);
             $this->load->view('public/partials/footer', $this->data);
         }
+        
     }
 
     //log the user out
@@ -108,7 +136,7 @@ class Member extends CI_Controller {
         $this->form_validation->set_rules('new_confirm', $this->lang->line('change_password_validation_new_password_confirm_label'), 'required');
 
         if (!$this->ion_auth->logged_in()) {
-            redirect('auth/login', 'refresh');
+            redirect('index.php/public/Member/login', 'refresh');
         }
 
         $user = $this->ion_auth->user()->row();
@@ -157,7 +185,7 @@ class Member extends CI_Controller {
                 $this->logout();
             } else {
                 $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect('Member/change_password', 'refresh');
+                redirect('index.php/Member/change_password', 'refresh');
             }
         }
     }
@@ -232,11 +260,10 @@ class Member extends CI_Controller {
 
             //set any errors and display the form
             $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-            
+
             $this->load->view('public/partials/header', $this->data);
-             $this->_render_page('authpublic/forgot_password', $this->data);
+            $this->_render_page('authpublic/forgot_password', $this->data);
             $this->load->view('public/partials/footer', $this->data);
-           
         } else {
             // get identity from username or email
             if ($this->config->item('identity', 'ion_auth') == 'username') {
@@ -253,7 +280,7 @@ class Member extends CI_Controller {
                 }
 
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect("auth/forgot_password", 'refresh');
+                redirect("index.php/public/Member/forgot_password", 'refresh');
             }
 
             //run the forgotten password method to email an activation code to the user
@@ -262,10 +289,10 @@ class Member extends CI_Controller {
             if ($forgotten) {
                 //if there were no errors
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
+                redirect("index.php/public/Member/forgot_password", 'refresh'); //we should display a confirmation page here instead of the login page
             } else {
                 $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect("auth/forgot_password", 'refresh');
+                redirect("index.php/public/Member/forgot_password", 'refresh');
             }
         }
     }
@@ -405,124 +432,130 @@ class Member extends CI_Controller {
 
     //create a new user
     function create_user() {
+
+        $this->data['csrf'] = _get_csrf_nonce();
+
         $this->data['title'] = "Create User";
+        //set the flash data error message if there is one
+        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
 
-//		if (!$this->ion_auth->logged_in())
-//		{
-//			redirect('member', 'refresh');
-//		}
+        $this->data['first_name'] = array(
+            'name' => 'first_name',
+            'id' => 'first_name',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('first_name'),
+        );
+        $this->data['last_name'] = array(
+            'name' => 'last_name',
+            'id' => 'last_name',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('last_name'),
+        );
+        $this->data['email'] = array(
+            'name' => 'email',
+            'id' => 'email',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('email'),
+        );
+        $this->data['institution'] = array(
+            'name' => 'institution',
+            'id' => 'institution',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('institution'),
+        );
+        $this->data['phone'] = array(
+            'name' => 'phone',
+            'id' => 'phone',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('phone'),
+        );
+        $this->data['password'] = array(
+            'name' => 'password',
+            'id' => 'password',
+            'type' => 'password',
+            'value' => $this->form_validation->set_value('password'),
+        );
+        $this->data['password_confirm'] = array(
+            'name' => 'password_confirm',
+            'id' => 'password_confirm',
+            'type' => 'password',
+            'value' => $this->form_validation->set_value('password_confirm'),
+        );
 
-            //display the create user form
-            //set the flash data error message if there is one
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+        $this->data['salutation'] = array(
+            '' => 'select...',
+            'miss' => 'Miss',
+            'mrs' => 'Mrs.',
+            'mr' => 'Mr.',
+            'dr' => 'Dr.',
+            'madam' => 'Madam',
+            'sir' => 'Sir',
+        );
 
-            $this->data['first_name'] = array(
-                'name' => 'first_name',
-                'id' => 'first_name',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('first_name'),
-            );
-            $this->data['last_name'] = array(
-                'name' => 'last_name',
-                'id' => 'last_name',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('last_name'),
-            );
-            $this->data['email'] = array(
-                'name' => 'email',
-                'id' => 'email',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('email'),
-            );
-            $this->data['institution'] = array(
-                'name' => 'institution',
-                'id' => 'institution',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('institution'),
-            );
-            $this->data['phone'] = array(
-                'name' => 'phone',
-                'id' => 'phone',
-                'type' => 'text',
-                'value' => $this->form_validation->set_value('phone'),
-            );
-            $this->data['password'] = array(
-                'name' => 'password',
-                'id' => 'password',
-                'type' => 'password',
-                'value' => $this->form_validation->set_value('password'),
-            );
-            $this->data['password_confirm'] = array(
-                'name' => 'password_confirm',
-                'id' => 'password_confirm',
-                'type' => 'password',
-                'value' => $this->form_validation->set_value('password_confirm'),
-            );
-            
-            $this->data['salutation'] = array(
-                ''=>'select...',
-                'miss'=>'Miss',
-                'mrs'=>'Mrs.',
-                'mr'=>'Mr.',
-                'dr'=>'Dr.',
-                'madam'=>'Madam',
-                'sir'=>'Sir',
-            );
+        $this->load->view('public/partials/header', $this->data);
+        $this->_render_page('authpublic/login', $this->data);
+        $this->load->view('public/partials/footer', $this->data);
 
-            $this->load->view('public/partials/header', $this->data);
-            $this->_render_page('authpublic/login', $this->data);
-            $this->load->view('public/partials/footer', $this->data);
-            
 //            $this->load->view('public/partials/header', $this->data);
 //            $this->_render_page('authpublic/create_user', $this->data);
 //            $this->load->view('public/partials/footer', $this->data);
-        
     }
-    
-    function process_create_user(){
-         $tables = $this->config->item('tables', 'ion_auth');
+
+    function process_create_user() {
+        $tables = $this->config->item('tables', 'ion_auth');
+
+        if ($this->_valid_csrf_nonce() === FALSE) {
+            show_error($this->lang->line('error_csrf'));
+        }
 
         //validate form input
         $this->form_validation->set_rules('first_name', $this->lang->line('create_user_validation_fname_label'), 'required');
         $this->form_validation->set_rules('last_name', $this->lang->line('create_user_validation_lname_label'), 'required');
         $this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'required|valid_email|is_unique[' . $tables['users'] . '.email]');
         $this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'required');
-        $this->form_validation->set_rules('institution', 'Institution'/*$this->lang->line('create_user_validation_company_label')*/, 'required');
+        $this->form_validation->set_rules('institution', 'Institution'/* $this->lang->line('create_user_validation_company_label') */, 'required');
         $this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
 
         if ($this->form_validation->run() == true) {
-            $username = strtolower($this->input->post('first_name')).' '.strtolower($this->input->post('last_name'));
+
 //            $username = strtolower($this->input->post('username'));
             $email = strtolower($this->input->post('email'));
             $password = $this->input->post('password');
 
+            $first_name = $this->input->post('first_name');
+            $last_name = $this->input->post('last_name');
+            $institution = $this->input->post('institution');
+            $phone = $this->input->post('phone');
+            $salutation = $this->input->post('salutation');
+
+            $username = $salutation . ' ' . strtolower($first_name) . ' ' . strtolower($last_name);
+
             $now = time();
             $additional_data = array(
-                'first_name' => $this->input->post('first_name'),
-                'last_name' => $this->input->post('last_name'),
-                'institution' => $this->input->post('institution'),
-                'phone' => $this->input->post('phone'),
-                'salutation'=>  $this->input->post('salutation'),
-                'created_on'=>  $now,
-                'last_login'=>$now
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'institution' => $institution,
+                'phone' => $phone,
+                'salutation' => $salutation,
+                'created_on' => $now,
+                'last_login' => $now
             );
-        }else{
-            $this->create_user();
-             echo $this->form_validation->error_string();
-        }
-        
-         if ($this->ion_auth->register($username, $password, $email, $additional_data,array(2))) {
-            //check to see if we are creating the user
-            //redirect them back to the admin page
-            $this->session->set_flashdata('message', $this->ion_auth->messages());
-            redirect("auth", 'refresh');
+
+            if ($this->ion_auth->register($username, $password, $email, $additional_data, array(2))) {
+                //check to see if we are creating the user
+                //redirect them back to the admin page
+                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                redirect("/index.php/public/Member/create_user", 'refresh');
+            } else {
+
+                $this->session->set_flashdata('message', $this->ion_auth->errors());
+                $this->create_user();
+            }
         } else {
-         
-            $this->session->set_flashdata('message', $this->ion_auth->errors());
             $this->create_user();
+            echo $this->form_validation->error_string();
         }
-        
     }
 
     //edit a user
@@ -752,7 +785,6 @@ class Member extends CI_Controller {
         $this->_render_page('auth/edit_group', $this->data);
     }
 
-    
     function _get_csrf_nonce() {
         $this->load->helper('string');
         $key = random_string('alnum', 8);

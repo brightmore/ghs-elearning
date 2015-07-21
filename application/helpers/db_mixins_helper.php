@@ -46,8 +46,18 @@ function getModerator($course_id) {
     $CI->db->select('first_name,last_name,salutation,institution,phone,email');
     $CI->db->from('users');
     $CI->db->where(array('id' => $instructor_id));
-    return $CI->db->get()->row();
+    $query = $CI->db->get();
+    $row = $query->row();
+    return $row;
 }
+
+function get_total_student_count_per_course($course_id){
+        
+    $CI = & get_instance();
+    $query = $CI->db->query("SELECT count(distinct user_id) as total FROM take_course WHERE course_id = ?",array($course_id));
+        return $query->row()->total;
+}
+    
 
 function getCourseSubject($course_id) {
     $CI = & get_instance();

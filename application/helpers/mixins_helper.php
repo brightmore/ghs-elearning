@@ -17,6 +17,10 @@ function check_file($field, $field_value) {
     return TRUE;
 }
 
+function toDateTime($unixTimestamp){
+    return date("d-m-Y H:i", $unixTimestamp);
+}
+
 function _get_csrf_nonce() {
     $CI = & get_instance();
     $CI->load->helper('string');

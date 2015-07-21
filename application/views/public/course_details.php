@@ -74,7 +74,7 @@
         </div>
         
         <div class=" row">
-            <div class="col-lg-12" > <a href="<?php echo base_url().'index.php/public/Frontier/take_course/'.$course->course_id?>" class="btn btn-default btn-primary pull-right">Take Course</a></div>
+            <div class="col-lg-12" > <a href="<?php echo base_url().'index.php/public/Frontier/take_course/'.$course->course_id.'/'.$course_name?>" class="btn btn-default btn-primary pull-right">Take Course</a></div>
         </div>
         <div class="row">
             <div class="col-sm-12 col-lg-12 col-md-12 col-xs-12">

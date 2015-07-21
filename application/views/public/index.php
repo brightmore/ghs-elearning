@@ -40,9 +40,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-4 col-lg-4 col-sm-12">
+    <div class="col-md-4 col-lg-4 col-sm-12 ">
+        <div class="alert-success">
         <h3>Catalogue</h3>
-        <ul>
+        <ul class="blist">
             <?php foreach ($catalogue as $row) { ?>
                 <li>
                     <a class='' data-popover="true" data-html=true 
@@ -57,11 +58,13 @@
                 </li>
             <?php } ?>
         </ul>
+        </div>
     </div>
     <div class="col-md-4 col-lg-4 col-sm-12">
+        <div class=" alert-success">
         <h3>My Community</h3>
         <?php if ($users_thread): ?>
-            <ul>
+            <ul class="blist">
                 <li>Your Activities In Forum</li>
                 <?php foreach ($users_thread as $value): ?>
                     <li><span style="background-color: <?php echo $value->color ?>; width:20px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -72,37 +75,40 @@
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
+        </div>
     </div>
     <div class="col-md-4 col-lg-4 col-sm-12">
-
+       <div class="alert-danger">
         <?php if ($news):?>
+        
             <h3> News</h3>
-            <ul>
+            <ul class="blist">
                 <?php foreach ($news as $value) { ?>
 
                     <li><?php echo $value->title ?></li>
 
                 <?php } ?>
             </ul>
+            
         <?php endif; ?>
             
         <?php if ($events): ?>
             <h3>Events</h3>
-            <ul>
+            <ul class="blist">
                 <?php foreach ($events as $row) { ?>
                     <li><a href="#"><?php echo $row->event_title ?></a></li>
                 <?php } ?>
             </ul>
         <?php endif; ?>
     </div>
-    
+    </div>
 </div>
 <div class="row">
             <div class="col-sm-12 col-lg-12 col-md-12 col-xs-12">
             <h3 style="border:1px solid #31ba00; padding: 5px;">Our most popular e-Learning programmes include:</h3>
             </div>
         </div>
-<div class="row border-bottom-style">
+<div class="row">
     <?php if (isset($course_outlines)): $base_url = base_url() ?>
 
         <?php foreach ($course_outlines as $value) { ?>

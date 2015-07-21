@@ -48,7 +48,7 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                         echo $this->session->flashdata('smessage');
                         ?>
                     </div>
-                    <?php echo form_open_multipart('Courses/process_form') ?>
+                    <?php echo form_open_multipart('index.php/Courses/process_form') ?>
                    
                     <?php echo form_hidden($csrf); ?>
                     <div class="form-group">
@@ -62,7 +62,7 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                         <?php echo form_error('category', '<div class="error">', '</div>'); ?>
                         <label>Categories</label>
                         <div class="field">
-                            <?php echo form_dropdown('category', $categories) ?>
+                            <?php echo form_dropdown('category', $categories);  ?>
                         </div>
                     </div>
 
@@ -92,7 +92,12 @@ $title_msg = ($id == 0) ? "Create" : " Update";
 
                     <div class="form-group">
                         <label>Moderator</label>
-                        <?php echo form_dropdown('moderator',$instructors); ?>
+                       <select name="instructor" class="form-control" >
+                           <option value="">Select Moderator</option>
+                                <?php foreach ($instructors as $instructor){?>
+                                <option value="<?php echo $instructor->id ?>"><?php echo $instructor->username?></option> 
+                                <?php } ?>
+                            </select>
                         <div class="alert-info alert">
                             Moderator is  an instructor or a faculty member who is in charge of the course.
                         </div>
@@ -107,8 +112,49 @@ $title_msg = ($id == 0) ? "Create" : " Update";
                                       placeholder="Course description"><?php echo set_value('course_description'); ?></textarea>
                         </div>
                     </div>
+                    
+                     <div class="form-group">
+                        <?php echo form_error('faq', '<div class="error">', '</div>'); ?>
+                        <label>Course FAQ'S*</label>
+                        <div class="field">
+                            <textarea cols="6" name="faq" id="faq" 
+                                      class="xxwide text input validate[required] form-control" 
+                                      placeholder="Course faq"><?php echo set_value('faq'); ?></textarea>
+                        </div>
+                    </div>
+                    
+                     <div class="form-group">
+                        <?php echo form_error('suggested_reading', '<div class="error">', '</div>'); ?>
+                        <label>Suggested Reading*</label>
+                        <div class="field">
+                            <textarea cols="6" name="suggested_reading" id="suggested_reading" 
+                                      class="xxwide text input validate[required] form-control" 
+                                      placeholder="Suggested reading"><?php echo set_value('suggested_reading'); ?></textarea>
+                        </div>
+                    </div>
+                    
+                     <div class="form-group">
+                        <?php echo form_error('course_format', '<div class="error">', '</div>'); ?>
+                        <label>Course Format*</label>
+                        <div class="field">
+                            <textarea cols="6" name="course_format" id="course_format" 
+                                      class="xxwide text input validate[required] form-control" 
+                                      placeholder="Course format"><?php echo set_value('course_format'); ?></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <?php echo form_error('recommended_background', '<div class="error">', '</div>'); ?>
+                        <label>Recommended Background*</label>
+                        <div class="field">
+                            <textarea cols="6" name="recommended_background" id="course_format" 
+                                      class="xxwide text input validate[required] form-control" 
+                                      placeholder="Recommended Background..."><?php echo set_value('recommended_background'); ?></textarea>
+                        </div>
+                    </div>
 
                     <div class="form-group">
+                        <label>Course Banner</label>
                         <input type="file" id="banner_url" name="banner_url" value="<?php echo set_value('banner_url') ?>" >
                     </div>
 

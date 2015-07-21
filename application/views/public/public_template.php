@@ -10,7 +10,8 @@
         <link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo base_url('assets/css/jquery.toast.css') ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo base_url('assets/css/publicstyle.css') ?>" rel="stylesheet" type="text/css" />
-<script src="<?php echo base_url('assets/js/jquery-2.1.4.min.js') ?>"></script>
+              <link href="<?php echo base_url('assets/css/paper-collapse.min.css') ?>" rel="stylesheet" type="text/css" />
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -295,7 +296,8 @@
                     <?php echo $content ?>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" id="sidebar">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
+                    <div id="sidebar">
                       <ul class="sidebar-menu">
                         <li class="treeview">
                             <a href="#">
@@ -345,22 +347,41 @@
                             </ul>
                         </li>
                     </ul><!--side-menu -->
-                    
-                    <ul>
+                    </div>
+                    <div class="alert alert-success" style="margin-top: 1.5em; color: #fff !important; font-weight: bolder">
+                    <ul class="blist">
                         <li><a href="<?php echo base_url()."index.php/public/Frontier/course_list" ?>">Category Structure</a></li>
                          <li><a href="<?php echo base_url()."index.php/public/Frontier/course_list_grid" ?>">Courses Overview</a></li>
                     </ul>
+                    </div>
+                    
+                    <div class="alert alert-success" style="min-height: 200px">&nbsp;</div>
                 </div> 
                 <!-- /sidebar-->
             </div>
         </div> 
-        <div class="footer container-fluid"></div>
+        <div class="footer container-fluid alert-success" style="margin-top:1.5em">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div style="padding: 0.6em">
+                    Powered and Maintain by - <a href="#">PMCONSULT</a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div style="padding: 0.6em">
+                        Supported by - <a href="#">Future Group</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <script src="<?php echo base_url('assets/js/jquery-2.1.4.min.js') ?>"></script>
         <!-- Bootstrap -->
         <script src="<?php echo base_url() ?>assets/js/bootstrap.min.js" type="text/javascript"></script>
 <!--        <script src="<?php echo base_url() ?>assets/js/jquery.toast.min.js" type="text/javascript"></script>
         <script src="<?php echo base_url() ?>assets/js/jquery.tmpl.min.js" type="application/javascript"></script>-->
-        
+        <script src="<?php echo base_url() ?>assets/js/paper-collapse.min.js" type="application/javascript"></script>
         <script src="<?php echo base_url() ?>assets/js/publicjs.js" type="text/javascript"></script>
     </body>
 </html>

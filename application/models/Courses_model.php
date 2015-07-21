@@ -54,10 +54,18 @@ class Courses_model extends CI_Model {
      * Function  courses under category
      * 
      */
-    function getCourses($cat_id = NULL) {
-        $this->db->select('courses.*,course_category.cat_name');
+    function getCourses($cat_id = NULL,$with_category=TRUE) {
+        
+        if($with_category){
+             $this->db->select('courses.*,course_category.cat_name');
+              $this->db->join($this->_category_table, "courses.category_id=course_category.cat_id");
+        }  else {
+            $this->db->select('*');
+        }
+       
+        
         $this->db->from($this->_table);
-        $this->db->join($this->_category_table, "courses.category_id=course_category.cat_id");
+       
         if (isset($cat_id)) {
             $this->db->where(array('courses.category_id' => $cat_id));
         }
@@ -66,17 +74,59 @@ class Courses_model extends CI_Model {
 
         $data = array();
         if ($q->num_rows() > 0) {
-            if (isset($cat_id)) {
-                $data = $q->row();
-            } else {
-                $data = $q->result();
-            }
+            $data = $q->result();
             $q->free_result();
         }
 
         return $data;
     }
+    
+    function getSubjectForCourses($course_id,$details = false){
+//      $course_id =  filter_var($id, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      
+      if(! $details){
+          $this->db->select("id,subject_id,subject_name,summary");
+          
+      }  else {
+          $this->db->select('*');
+      }
+      
+      $this->db->from("subject");
+      $this->db->where('course_id',$course_id);
+      $query = $this->db->get();
+      $data = [];
+      
+      if($query->num_rows() > 0){
+          $data = $query->result();
+          $query->free_result();
+      }
+      return $data;
+    }
+    
+    function getSubjectForCouserDetail($course_id){
+        
+    }
 
+    function getCourseDescription($course_id){
+        $this->db->select('course_description');
+        $this->db->from('courses');
+        $this->db->where('course_id',$course_id);
+        $query = $this->db->get();
+        $row = $query->row()->course_description;
+        return $row;
+    }
+    
+    function get_total_courses(){
+       return $this->db->count_all_results($this->_table);
+    }
+    
+    function get_total_course_takers(){
+        
+        $query = $this->db->query("SELECT count(distinct user_id) as total FROM take_course");
+        return $query->row()->total;
+    }
+    
+    
     function get_course($course_id) {
         $this->db->select('courses.*,course_category.cat_name');
         $this->db->from($this->_table);
@@ -120,6 +170,39 @@ class Courses_model extends CI_Model {
         }
 
         return $data;
+    }
+    
+    function get_all_courses(){
+       $this->db->select('courses.*,course_category.cat_name');
+        $this->db->join($this->_category_table, "courses.category_id=course_category.cat_id");
+        $this->db->from($this->_table);
+        $query = $this->db->get();
+        
+        $data =array();
+        if($query->num_rows()){
+            $data = $query->result();
+            $query->free_result();
+        }
+        
+        return $data;
+    }
+    
+//    function get_courses(){
+//        $this->db->select('*');
+//        $this->db->from($this->_table);
+//        $query = $this->db->get();
+//        
+//        $data =array();
+//        if($query->num_rows()){
+//            $data = $query->result();
+//            $query->free_result();
+//        }
+//        
+//        return $data;
+//    }
+    
+    function getCoursesByCategories($data){
+        
     }
 
     function findCategoryByPk($id) {

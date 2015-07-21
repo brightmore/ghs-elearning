@@ -149,6 +149,10 @@ class Subject_model extends CI_Model {
         return $data;
     }
     
+    function getSubjectsForCourse($subject_id){
+        
+    }
+    
     
     function getSubjectDetail($subject_id){
         $this->db->select('subject.*,courses.*,course_category.cat_name');

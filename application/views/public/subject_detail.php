@@ -26,7 +26,6 @@
     </div>
 </div>
 
-
 <?php $subject_content = get_subject_content($subject->subject_id) ?>
 
 <?php if (!empty($subject_content)): ?>

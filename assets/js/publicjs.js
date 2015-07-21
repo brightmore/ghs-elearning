@@ -10,7 +10,7 @@ $(function(){
     $(".front .treeview").tree();
     
     $("[data-toggle=popover]").popover();
-     console.log('step1')
+  
     $('#message_form').hide();
     $('#email_form').hide();
     $('#student_message_form').hide();

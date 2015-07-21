@@ -76,7 +76,6 @@ class Messager_model extends CI_Model {
             $search = mysql_escape_string($search);
         }
 
-
         //$this->db->where($where, NULL, FALSE);
         $this->db->order_by($sort_field, $sortby);
         $this->db->limit($limit, $start);
@@ -113,7 +112,7 @@ class Messager_model extends CI_Model {
 
         $ids = implode(',', $list);
 
-        $sql = "SELECT username,email FROM users WHERE id IN[?]";
+        $sql = "SELECT email FROM users WHERE id IN[?]";
         $query = $this->db->query($sql, array($ids));
 
         $data = array();
@@ -125,12 +124,36 @@ class Messager_model extends CI_Model {
         if (empty($data)) {
             return FALSE;
         }
-        
+
         $mailing_list = array();
         try {
-            foreach($data as $value){
-                $mailing_list[$value->username] = $value->email;
+            foreach ($data as $value) {
+                $mailing_list[] = $value->email;
             }
+
+            $recepients = implode(",", $mailing_list);
+
+            $this->email->initialize($config);
+            $this->email->clear(TRUE);
+            $this->email->from($this->load->config('admin_email', TRUE), 'Ghana Health Services');//
+            $this->email->to('support@**.com');
+            $this->email->bcc($recepients);
+            $this->email->subject($title);
+            // $data['message'] = $message;
+            // $message = $this->load->view('email_template',$data,TRUE);
+            $this->email->message($message);
+
+            if (isset($attachment)) {
+                if (file_exists($attachment)) {
+                    $this->email->attach($attachment);
+                }
+            }
+
+            if ($this->email->send()) {
+               return TRUE;
+            }
+            
+            return false;
         } catch (Exception $exc) {
             log_message('error', "[location]:Messager_model,[method]:send_bulk_mail, [error]:" . $exc->getMessage());
             echo $exc->getTraceAsString();
@@ -142,6 +165,7 @@ class Messager_model extends CI_Model {
             return false;
         }
 
+      $sender_username =  $this->db->select('username')->from('users')->where('id',$sender_id)->get()->row()->username;
         $now = time();
         $data = array();
         foreach ($list as $value) {
@@ -149,12 +173,13 @@ class Messager_model extends CI_Model {
                 'mgs' => $message,
                 'dateCreateOn' => $now,
                 'sender' => $sender_id,
-                'receiver' => $value
+                'receiver' => $value,
+                'sender_username'=>$sender_username
             );
         }
 
         try {
-            $this->db->insert_batch('mytable', $data);
+            $this->db->insert_batch('messagers', $data);
             if ($this->db->affected_rows() > 0) {
                 return TRUE;
             }
@@ -165,11 +190,77 @@ class Messager_model extends CI_Model {
             echo $exc->getTraceAsString();
         }
     }
+    
+    function delete_event($ids){
+        if(is_array($ids)){
+            foreach ($ids as $id){
+                $this->db->where('id',$id);
+                $this->db->delete('messager');
+            }
+        }else{
+            $this->db->where('id',$id);
+            $this->db->delete('messager');
+        }
+    }
+    
+    function get_messages($user_id){
+        
+        if(!is_integer($user_id)){
+            show_error("Invalid user id, trying to access the system from outside.");
+        }
+        
+        $this->db->select("id,mgs,dateCreateOn,title,sender_username");
+        $this->db->from($this->_table);
+        $this->db->where(array('receiver' => $user_id));
+        $query = $this->db->get();
+       
+       $data = array();
+       if($query->num_rows() > 0){
+           $data = $query->result();
+           $query->free_result();
+       }
+       return $data;
+        
+    }
+    
+    function get_message($id){
+        if(! is_integer($id)){
+            //@TODO
+            show_404("Invalid message id, trying to access the system from outside.");
+        }
+        
+        $where = ['id'=>$id];
+        $this->db->update('messager',["viewed"=>'YES'],$where);
+//        if($this->db->affected_rows() > 0){
+//            
+//        }
+        $this->db->select("*");
+        $this->db->from('messager');
+        $this->db->where(array('id'=>$id));
+        $query = $this->db->get();
+        
+        $result = $query->row();
+        
+        $data[] = $result;
+        
+        $query->free_result();
+        
+        $sql = "SELECT * FROM messager WHERE id != ? ORDER BY id desc LIMIT 20";
+        $q = $this->db->query($sql,array($id));
+        if($q->num_rows()){
+            array_push($data, $q->result());
+            $q->free_result();
+        }
+        
+        return $data;
+       
+    }
 
-    function get_messages_count($username) {
+    function get_messages_count($user_id) {
         $this->db->select("COUNT(*) AS numrows");
         $this->db->from($this->_table);
-        $this->db->where(array('receiver' => $username));
+        $this->db->where(array('receiver' => $user_id,'viewed'=>'NO'));
+        
         return $this->db->get()->row()->numrows;
     }
 

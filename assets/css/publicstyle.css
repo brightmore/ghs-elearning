@@ -6,6 +6,49 @@ a {
     color:#fff;
 }
 
+.block_archor{
+    display: block;
+    color: transparent;
+    padding: 10px 0 20px;
+    margin-bottom: 10px;
+     -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+a.block_archor:hover{
+   text-decoration: none;
+   background-color: grey;
+   color:#fff;
+}
+
+#courses_summary .description{
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.course_name{
+    font-weight: bolder;
+    border-bottom: solid #31ba00 1px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+}
+
+ul.blist,.course_list{
+    padding: 0;
+    margin: 0;
+   
+}
+
+ul.blist li,.course_list{
+    padding: 0.3em;
+    list-style: none;
+}
+
+ul.blist li a{
+    color:black;
+}
+
 h1,h2,h3,h4,h5,h6{
 /*    padding: 0;
     margin: 1em;*/
@@ -597,3 +640,43 @@ h1,h2,h3,h4,h5,h6{
         font-family:Verdana, Geneva, sans-serif;
 }
 .form input.buttom:hover{ background-color: #2a78f6; }
+
+//events
+.event .overlay:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.event .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.35s ease;
+    -webkit-transition: all 0.35s ease;
+    -moz-transition: all 0.35s ease;
+    -o-transition: all 0.35s ease;
+    -ms-transition: all 0.35s ease;
+    border-radius: inherit;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.event .overlay {
+    background-color: rgba(0,0,255,0.15);
+}
+
+.event .label.date {
+    font-size: 20px;
+}
+
+.event {
+    padding: 1em;
+}
+
+.event p {
+    margin-top: 1em;
+}

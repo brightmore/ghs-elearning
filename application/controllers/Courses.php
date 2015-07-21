@@ -66,7 +66,7 @@ class Courses extends CI_Controller {
 
     public function create_course() {
 
-        $this->load->model('Members_mobel', 'mMember');
+        $this->load->model('Members_model', 'mMember');
 
         $categories_list = $this->mcourses->getCourseCategories();
         $categories = array();
@@ -83,15 +83,12 @@ class Courses extends CI_Controller {
         // insert csrf check
         $content['csrf'] = _get_csrf_nonce();
         $content['categories'] = $categories;
-        $content['instructors'] = $this->mMember->get_instructors_for_view();
-        $content['courses'] = $this->mcourses->getCourses();
+        $content['instructors'] = $this->mMember->get_moderators_instructors();
+        $content['courses'] = $this->mcourses->get_all_courses();
         $data['title'] = "Course Management";
         $data['content'] = $this->load->view('admin/create_courses', $content, TRUE);
         $this->load->view('admin/template', $data);
-       
     }
-    
-    
 
     /**
      * Functon edit
@@ -168,7 +165,17 @@ class Courses extends CI_Controller {
             $this->upload->initialize($config);
             $this->upload->do_upload();
 
+            $this->load->library('upload');
+            $this->upload->initialize($config);
+            $this->upload->do_upload($fieldname);
             $error = $this->upload->display_errors();
+            if (empty($error)) {
+                $data = $this->upload->data();
+                $this->course_banner = $data['file_name'];
+                $this->banner_url = $this->upload_location . '/' . $this->course_banner;
+            } else {
+                $this->errors['banner_url'] = $error;
+            }
 
             if (empty($error)) {
                 $file_data = $this->upload->data();
@@ -268,7 +275,7 @@ class Courses extends CI_Controller {
 
         if (_valid_csrf_nonce() === FALSE) {
             $this->session->flashdata('error', 'There is something fishy about the form you just submitted, it fails CSRF Test');
-            redirect("Courses/");
+            redirect("index.php/Courses/");
         }
 
         $id = isset($_POST['id']) ? $_POST['id'] : 0;
@@ -278,26 +285,43 @@ class Courses extends CI_Controller {
         $data = array();
 
         //validation rules
-        $this->form_validation->set_rules("course_description", "Course Description", "trim|required");
+        $this->form_validation->set_rules("course_description", "Course Description", "trim|required|xss_clean");
         $this->form_validation->set_rules("course_type", "Course Type", "trim|required");
-        $this->form_validation->set_rules('course_name', 'Course name', 'trim|required');
+        $this->form_validation->set_rules('course_name', 'Course name', 'trim|required|xss_clean');
         $this->form_validation->set_rules("category", "Course Category", "required|callback_category_check");
+        $this->form_validation->set_rules('suggested_reading','Suggested Reading','required|xss_clean');
+        $this->form_validation->set_rules('faq','Course FAQ','required|xss_clean');
+        $this->form_validation->set_rules('course_format','Course Format','required|xss_clean');
+        
 
         //check if the course been updated or new record
 
-        $this->banner_url = "";
+        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+
+        if ($this->form_validation->run() == FALSE) {
+
+            $message['is_redirect'] = false;
+            $err = validation_errors();
+            //$err =  $this->form_validation->_error_array();
+            $data = $err;
+            $count = count($this->form_validation->error_array());
+            $message['error_count'] = $count;
+            echo $err;
+        } else {
+
+         $this->banner_url = "";
         if (@$_FILES['banner_url']['name'] !== "") {
             $config['upload_path'] = $this->upload_location;
             $config['allowed_types'] = 'jpeg|png|jpg|gif';
             $config['encrypt_name'] = TRUE;
             $config['remove_spaces'] = TRUE;
-            $config['max_size'] = '10048';
+            $config['max_size'] = '1048';
 
             $this->load->library('upload');
             $this->upload->initialize($config);
             $this->upload->do_upload("banner_url");
             $error = $this->upload->display_errors();
-           
+
             if (empty($error)) {
                 $file_data = $this->upload->data();
                 $this->course_banner = $file_data['file_name'];
@@ -310,18 +334,7 @@ class Courses extends CI_Controller {
             $this->upload_file($config, 'course_banner');
         }
 
-        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
-
-        if ($this->form_validation->run() == FALSE) {
-
-            $message['is_redirect'] = false;
-            $err = validation_errors();
-            //$err =  $this->form_validation->_error_array();
-            $data = $err;
-            $count = count($this->form_validation->error_array());
-            $message['error_count'] = $count;
-        } else {
-
+        
             //if there is update, the id would be set 
             $id = $this->input->post('id');
             $course_description = $this->input->post('course_description');
@@ -329,16 +342,21 @@ class Courses extends CI_Controller {
             $course_name = $this->input->post('course_name');
             $course_type = $this->input->post('course_type');
             $category_id = $this->input->post('category');
-            $instructor_id = $this->input->post('moderator');
-
-
+            $instructor_id = $this->input->post('instructor');
+            $course_format = $this->input->post('course_format');
+            $faq = $this->input->post('faq');
+            $suggested_reading = $this->input->post('suggested_reading');
+         
             $data_inser_array = array(
                 'course_description' => $course_description,
-                'banner_url' => $banner_url,
+                'banner_url' => $this->banner_url,
                 'course_type' => $course_type,
                 'category_id' => $category_id,
                 'course_name' => $course_name,
-                'instructor_id' => $instructor_id
+                'instructor_id' => $instructor_id,
+                'course_format'=>$course_format,
+                'suggested_readings'=>$suggested_reading,
+                'faq'=>$faq
             );
 
             if (isset($id) && !empty($id)) {
@@ -364,17 +382,18 @@ class Courses extends CI_Controller {
             }
             if ($insert) {
 
-                $message['is_error'] = false;
-                $message['is_redirect'] = true;
+                $this->session->set_flashdata('success',$data);
+                redirect('index.php/Dashboard/Courses','refresh');
+//                $message['is_error'] = false;
+//                $message['is_redirect'] = true;
             } else {
-                $message['is_error'] = true;
-                $message['is_redirect'] = false;
+//                $message['is_error'] = true;
+//                $message['is_redirect'] = false;
                 $data = "Something Went Wrong..";
+                  $this->session->set_flashdata('success',$data);
+                redirect('index.php/Dashboard/Courses','refresh');
             }
         }
-        $message['data'] = $data;
-        echo json_encode($message);
-        exit;
     }
 
     /**
@@ -484,7 +503,7 @@ class Courses extends CI_Controller {
             $this->session->flashdata("error", "Internal operational has occurred, Please try again later. "
                     . "<br /> If the problem persist contact your system administrator.");
         }
-        redirect('Courses/');
+        redirect('index.php/Courses/');
     }
 
     public function check_file($field, $field_value) {

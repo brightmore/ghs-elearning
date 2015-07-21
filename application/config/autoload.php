@@ -104,7 +104,7 @@ $autoload['helper'] = array('url','form','file','text','db_mixins','mixins','sec
 |
 */
 
-$autoload['config'] = array();
+$autoload['config'] = array('application');
 
 
 /*

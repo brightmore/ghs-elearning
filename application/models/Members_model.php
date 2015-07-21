@@ -17,6 +17,9 @@ if (!defined("BASEPATH"))
 class Members_model extends CI_Model {
 
     private $_table = "users";
+    const STUDENTS = 2;
+    const INSTRUCTORS = 3;
+    const MODERATORS= 4;
 
     public function __construct() {
         parent::__construct();
@@ -91,11 +94,43 @@ class Members_model extends CI_Model {
 
         return $data;
     }
+    
+    function get_total_instructors_moderators(){
+         $sql = "SELECT count(distinct users.id) as total_falcuty FROM users inner join users_groups on users_groups.user_id = users.id
+where users_groups.group_id IN(?,?);";
+        
+        $query = $this->db->query($sql,array(Members_model::INSTRUCTORS,  Members_model::MODERATORS));
+       return $total_falcuty = $query->row()->total_falcuty;
+    }
+    
+    function get_total_students(){
+         $sql = "SELECT count(distinct users.id) as total_students FROM users inner join users_groups on users_groups.user_id = users.id
+where users_groups.group_id = ?;";
+        
+        $query = $this->db->query($sql,array(Members_model::STUDENTS));
+       return $total_student = $query->row()->total_students;
+    }
+    
+    function get_students_limit(){
+        $sql = "SELECT distinct(users.id),username,email,phone,institution  FROM users inner join users_groups on users_groups.user_id = users.id
+where users_groups.group_id = ? LIMIT 30;";
+        
+        $query = $this->db->query($sql,array(Members_model::STUDENTS));
+        
+        $data = array();
+        
+        if($query->num_rows() > 0){
+            $data = $query->result();
+            $query->free_result();
+        }
+        
+        return $data;
+    }
 
     function get_moderators_instructors(){
-        $sql = "SELECT distinct(users.id),username,email,phone,institution FROM elearning.users inner join users_groups on users_groups.user_id = users.id
-where users_groups.group_id IN(3);";
-        $query = $this->db->query($sql);
+        $sql = "SELECT distinct(users.id),username,email,phone,institution FROM users inner join users_groups on users_groups.user_id = users.id
+where users_groups.group_id IN(?,?);";
+        $query = $this->db->query($sql,array(Members_model::INSTRUCTORS,  Members_model::MODERATORS));
 
         $data = array();
         if ($query->num_rows() > 0) {

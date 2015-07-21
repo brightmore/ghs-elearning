@@ -29,7 +29,7 @@ class Subject extends CI_Controller {
      * 
      */
     function index() {
-        $this->load->model('Members_mobel', 'mMember');
+        $this->load->model('Members_model', 'mMember');
         $courses_list = $this->mcourses->getCourses();
         $courses = array();
 
@@ -42,7 +42,7 @@ class Subject extends CI_Controller {
         $content['csrf'] = _get_csrf_nonce();
         $content['id'] = 0;
         $content['subjects'] = $this->msubject->getSubjectDetails();
-        $content['instructors'] = $this->mMember->get_instructors_for_view();
+        $content['instructors'] = $this->mMember->get_moderators_instructors();
         $data['title'] = "Subject Management";
 
         $content['page'] = "Subjects";
